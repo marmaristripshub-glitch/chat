@@ -1,0 +1,157 @@
+{
+  "sections": {
+    "main": {
+      "type": "wytamin-product",
+      "settings": {
+        "subtitle": "Günlük rutininiz için gelişmiş kolajen formülü",
+        "description": "Ürününüzün içeriğini, kullanımını ve öne çıkan özelliklerini burada açıklayın.",
+        "review_count": 0,
+        "verified_seller": false,
+        "verified_label": "Doğrulanmış Satıcı",
+        "image_fit": "contain",
+        "why_title": "Neden bu ürünü seçmelisiniz?",
+        "why_points": "Ürün içeriği hakkında açık bilgi\nGünlük rutine uygun kullanım\nPratik hazırlama\nKullanım detaylarını inceleyin",
+        "pack_title": "Kampanyalı Paket Seçenekleri",
+        "pack_note": "Size uygun paketi seçin",
+        "featured_label": "Öne çıkan paket",
+        "campaign_heading": "Sınırlı Süreli Kampanya!",
+        "stock_reference": 40,
+        "add_label": "Sepete Ekle",
+        "buy_label": "Hemen Satın Al",
+        "loading_label": "Sepete ekleniyor…",
+        "purchase_destination": "checkout",
+        "show_trust": true,
+        "shipping_title": "Kargo Bilgileri",
+        "shipping_note": "Ödeme adımında",
+        "dispatch_title": "Gönderim Bilgileri",
+        "dispatch_note": "Teslimat politikasını inceleyin",
+        "return_title": "İade Koşulları",
+        "return_note": "İade politikasını inceleyin",
+        "support_title": "Müşteri Desteği",
+        "support_note": "Sorularınız için yanınızdayız",
+        "authenticity_title": "Ürün Bilgileri",
+        "authenticity_note": "İçerik ve kullanım detayları",
+        "security_title": "Güvenle Alışveriş Yapın",
+        "security_note": "Ödeme bilgileriniz Shopify ödeme altyapısında güvenle işlenir.",
+        "reviews_heading": "Gerçek Kullanıcı Deneyimleri",
+        "blue": "#0055ED",
+        "red": "#E60028",
+        "navy": "#111E48",
+        "max_width": 1680
+      },
+      "blocks": {
+        "wy_block_0": {
+          "type": "benefit",
+          "settings": {
+            "icon": "skin",
+            "title": "Cilt Elastikiyeti",
+            "text": "Ürün faydası"
+          }
+        },
+        "wy_block_1": {
+          "type": "benefit",
+          "settings": {
+            "icon": "drop",
+            "title": "Saç ve Tırnak",
+            "text": "Ürün faydası"
+          }
+        },
+        "wy_block_2": {
+          "type": "benefit",
+          "settings": {
+            "icon": "bone",
+            "title": "Eklem ve Kemik",
+            "text": "Ürün faydası"
+          }
+        },
+        "wy_block_3": {
+          "type": "benefit",
+          "settings": {
+            "icon": "shield",
+            "title": "Günlük Destek",
+            "text": "İçerikleri inceleyin"
+          }
+        },
+        "wy_block_4": {
+          "type": "ingredient",
+          "settings": {
+            "icon": "peptide",
+            "title": "Tip 1, 2, 3",
+            "text": "Kolajen Peptitleri",
+            "tone": "red"
+          }
+        },
+        "wy_block_5": {
+          "type": "ingredient",
+          "settings": {
+            "icon": "drop",
+            "title": "Hyaluronik",
+            "text": "Asit",
+            "tone": "blue"
+          }
+        },
+        "wy_block_6": {
+          "type": "ingredient",
+          "settings": {
+            "icon": "sun",
+            "title": "C, D3, K2",
+            "text": "Vitaminleri",
+            "tone": "orange"
+          }
+        },
+        "wy_block_7": {
+          "type": "ingredient",
+          "settings": {
+            "icon": "leaf",
+            "title": "Çinko",
+            "text": "İçerik bilgileri",
+            "tone": "green"
+          }
+        },
+        "wy_block_8": {
+          "type": "pack",
+          "settings": {
+            "qty": 1,
+            "title": "1 Kutu",
+            "text": "",
+            "featured": false
+          }
+        },
+        "wy_block_9": {
+          "type": "pack",
+          "settings": {
+            "qty": 2,
+            "title": "2 Kutu",
+            "text": "",
+            "featured": true
+          }
+        },
+        "wy_block_10": {
+          "type": "pack",
+          "settings": {
+            "qty": 3,
+            "title": "3 Kutu",
+            "text": "",
+            "featured": false
+          }
+        }
+      },
+      "block_order": [
+        "wy_block_0",
+        "wy_block_1",
+        "wy_block_2",
+        "wy_block_3",
+        "wy_block_4",
+        "wy_block_5",
+        "wy_block_6",
+        "wy_block_7",
+        "wy_block_8",
+        "wy_block_9",
+        "wy_block_10"
+      ]
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

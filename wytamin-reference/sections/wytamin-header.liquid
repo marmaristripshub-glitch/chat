@@ -1,0 +1,65 @@
+<header id="wy-header-{{ section.id }}" class="wy-header" data-root-url="{{ routes.root_url }}">
+  <div class="wy-header-inner">
+    <a href="{{ routes.root_url }}" class="wy-header-brand" aria-label="{{ section.settings.brand_name | escape }} ana sayfa">{% if section.settings.logo != blank %}{{ section.settings.logo | image_url:width:500 | image_tag:width:210,loading:'eager',alt:section.settings.brand_name }}{% else %}{{ section.settings.brand_name | escape }}{% endif %}</a>
+    <form action="{{ routes.search_url }}" method="get" role="search" class="wy-header-search"><label for="wy-search-{{ section.id }}" class="wy-header-hidden">Ürün ara</label><input id="wy-search-{{ section.id }}" type="search" name="q" placeholder="{{ section.settings.search_placeholder | escape }}" value="{{ search.terms | escape }}"><button type="submit" aria-label="Ara"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="10" cy="10" r="7"/><path d="m15 15 7 7"/></svg></button></form>
+    <div class="wy-header-promises">
+      <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M1 5h13v13H1zM14 9h5l4 5v4h-9"/><circle cx="6" cy="19" r="2"/><circle cx="19" cy="19" r="2"/></svg><p><strong>{{ section.settings.shipping_title | escape }}</strong><small>{{ section.settings.shipping_note | escape }}</small></p></div>
+      <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m12 2 9 4v6c0 5-9 10-9 10S3 17 3 12V6l9-4Z"/><path d="m8 12 3 3 5-6"/></svg><p><strong>{{ section.settings.payment_title | escape }}</strong><small>{{ section.settings.payment_note | escape }}</small></p></div>
+      <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 13v-2a8 8 0 0 1 16 0v2M4 12H2v8h5v-8H4Zm16 0h2v8h-5v-8h3Zm0 8c0 2-4 3-8 3"/></svg><p><strong>{{ section.settings.support_title | escape }}</strong><small>{{ section.settings.support_note | escape }}</small></p></div>
+    </div>
+    <div class="wy-header-actions">{% if shop.customer_accounts_enabled %}<a href="{{ routes.account_url }}" aria-label="Hesabım"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M3 23v-3a9 9 0 0 1 18 0v3H3Z"/></svg><span>Hesabım</span></a>{% endif %}<a href="{{ routes.cart_url }}" class="wy-header-cart"><span class="wy-header-cart-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l3 13h12l3-9H6"/></svg><span data-wy-header-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count | default:0 }}</span></span><span>Sepetim</span></a></div>
+  </div>
+</header>
+{% style %}
+#wy-header-{{ section.id }}{color:#101e4d;background:#fff;border-bottom:1px solid #e8edf6;box-shadow:0 3px 16px #09235d05;font-family:var(--font-body--family,Arial,sans-serif)}
+#wy-header-{{ section.id }} *{box-sizing:border-box}
+#wy-header-{{ section.id }} .wy-header-inner{max-width:1800px;margin:auto;min-height:70px;padding:10px 30px;display:flex;align-items:center;gap:27px}
+#wy-header-{{ section.id }} .wy-header-brand{flex:none;display:flex;align-items:center;color:#08255d;text-decoration:none;font-size:32px;font-weight:850;letter-spacing:1.3px;line-height:1;border-right:1px solid #e9edf5;padding-right:28px}
+#wy-header-{{ section.id }} .wy-header-brand img{width:210px;height:auto;max-height:50px;object-fit:contain}
+#wy-header-{{ section.id }} .wy-header-search{display:flex;align-items:center;position:relative;flex:1;min-width:160px;border:1px solid #e0e7f2;background:#f6f8fc;border-radius:19px;height:45px;margin:0;overflow:hidden}
+#wy-header-{{ section.id }} .wy-header-search input{border:0;background:transparent;min-width:0;width:100%;font:inherit;font-size:13px;outline-offset:-3px;padding:12px 14px;color:#17254c}
+#wy-header-{{ section.id }} .wy-header-search input::placeholder{color:#53617d}
+#wy-header-{{ section.id }} .wy-header-search button{border:0;background:transparent;padding:10px 14px;color:#0d1d4b;cursor:pointer}
+#wy-header-{{ section.id }} svg{display:block;width:25px;height:25px;flex:none}
+#wy-header-{{ section.id }} .wy-header-search svg{width:19px;height:19px}
+#wy-header-{{ section.id }} .wy-header-promises{display:flex;align-items:center;gap:25px;flex:none}
+#wy-header-{{ section.id }} .wy-header-promises>div{display:flex;align-items:center;gap:9px}
+#wy-header-{{ section.id }} p{margin:0}
+#wy-header-{{ section.id }} strong,#wy-header-{{ section.id }} small{display:block;font-size:11px;line-height:1.4}
+#wy-header-{{ section.id }} strong{font-weight:750}
+#wy-header-{{ section.id }} small{font-size:10px;color:#5b6b8b;margin-top:3px}
+#wy-header-{{ section.id }} .wy-header-actions{display:flex;align-items:center;gap:25px;flex:none;border-left:1px solid #e9edf5;padding-left:18px}
+#wy-header-{{ section.id }} .wy-header-actions>a{display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit;font-size:11px;font-weight:550;white-space:nowrap}
+#wy-header-{{ section.id }} .wy-header-cart-icon{position:relative}
+#wy-header-{{ section.id }} [data-wy-header-count]{position:absolute;right:-8px;top:-9px;background:#eb002e;color:white;border-radius:50%;min-width:18px;height:18px;font-size:10px;text-align:center;padding:1px 4px;border:1px solid #fff}
+#wy-header-{{ section.id }} [hidden]{display:none!important}
+#wy-header-{{ section.id }} :is(button,a,input):focus-visible{outline:3px solid #0055ed;outline-offset:3px}
+#wy-header-{{ section.id }} .wy-header-hidden{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:1399px){#wy-header-{{ section.id }} .wy-header-inner{gap:18px;padding:10px 24px}#wy-header-{{ section.id }} .wy-header-promises{gap:15px}#wy-header-{{ section.id }} .wy-header-promises>div:nth-child(3){display:none}#wy-header-{{ section.id }} .wy-header-brand{font-size:28px;padding-right:18px}#wy-header-{{ section.id }} .wy-header-actions{gap:17px;padding-left:14px}}
+@media(max-width:1099px){#wy-header-{{ section.id }} .wy-header-promises{display:none}#wy-header-{{ section.id }} .wy-header-brand{font-size:28px}#wy-header-{{ section.id }} .wy-header-inner{gap:20px}}
+@media(max-width:749px){#wy-header-{{ section.id }} .wy-header-inner{min-height:66px;padding:14px;flex-wrap:wrap;gap:14px;justify-content:space-between}#wy-header-{{ section.id }} .wy-header-brand{font-size:27px;border:0;padding:0}#wy-header-{{ section.id }} .wy-header-brand img{width:155px;max-height:40px}#wy-header-{{ section.id }} .wy-header-actions{padding:0;border:0;gap:20px}#wy-header-{{ section.id }} .wy-header-actions>a{font-size:10px;gap:5px}#wy-header-{{ section.id }} .wy-header-search{order:3;flex:1 0 100%;height:43px;border-radius:12px}#wy-header-{{ section.id }} .wy-header-search input{font-size:16px}#wy-header-{{ section.id }} .wy-header-actions svg{width:24px;height:24px}}
+@media(max-width:359px){#wy-header-{{ section.id }} .wy-header-actions>a>span:last-child{display:none}}
+{% endstyle %}
+<script>
+(() => {
+  if(window.__WytaminHeaderReady)return;
+  window.__WytaminHeaderReady=true;
+  function paint(value){
+    const count=Number(value);if(!Number.isFinite(count)||count<0)return;
+    document.querySelectorAll('[data-wy-header-count]').forEach(element=>{element.textContent=String(count);element.hidden=count===0;});
+  }
+  document.addEventListener('shopify:cart:lines-update',event=>{
+    event.promise?.then(({cart,detail})=>paint(cart?.totalQuantity??detail?.itemCount)).catch(()=>{});
+  });
+  document.addEventListener('mv:cart-updated',event=>paint(event.detail?.itemCount??event.detail?.cart?.item_count));
+  window.addEventListener('pageshow',event=>{
+    if(!event.persisted)return;
+    const root=document.querySelector('.wy-header')?.dataset.rootUrl||'/';
+    fetch(root.replace(/\/?$/,'/')+'cart.js',{credentials:'same-origin',cache:'no-store',headers:{Accept:'application/json'}})
+      .then(response=>response.ok?response.json():null).then(cart=>{if(cart)paint(cart.item_count);}).catch(()=>{});
+  });
+})();
+</script>
+{% schema %}
+{"name":"Wytamin Üst Başlık","enabled_on":{"groups":["header"]},"settings":[{"type":"text","id":"brand_name","label":"Marka adı","default":"WYTAMIN"},{"type":"image_picker","id":"logo","label":"Logo"},{"type":"text","id":"search_placeholder","label":"Arama metni","default":"Ürün, kategori veya marka ara..."},{"type":"text","id":"shipping_title","label":"Kargo başlığı","default":"Kargo Bilgileri"},{"type":"text","id":"shipping_note","label":"Kargo açıklaması","default":"Ödeme adımında"},{"type":"text","id":"payment_title","label":"Ödeme başlığı","default":"Güvenli Ödeme"},{"type":"text","id":"payment_note","label":"Ödeme açıklaması","default":"Shopify altyapısı"},{"type":"text","id":"support_title","label":"Destek başlığı","default":"Müşteri Desteği"},{"type":"text","id":"support_note","label":"Destek açıklaması","default":"Sorularınız için yanınızdayız"}],"presets":[{"name":"Wytamin Üst Başlık"}]}
+{% endschema %}

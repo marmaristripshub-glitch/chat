@@ -1,0 +1,1219 @@
+{% liquid
+  assign mv_p = product | default: closest.product
+  assign mv_v = mv_p.selected_or_first_available_variant
+  assign mv_min = mv_v.quantity_rule.min | default: 1
+  assign mv_inc = mv_v.quantity_rule.increment | default: 1
+  assign mv_form_id = 'wy-form-' | append: section.id
+  assign wy_rating = mv_p.metafields.reviews.rating.value.rating | default: section.settings.rating
+  assign wy_count = mv_p.metafields.reviews.rating_count.value | default: section.settings.review_count | plus: 0
+  assign wy_review_blocks = section.blocks | where: 'type', 'review'
+  assign wy_pack_blocks = section.blocks | where: 'type', 'pack'
+%}
+<section id="wy-product-{{ section.id }}" class="wy-product" data-wy-product data-root-url="{{ routes.root_url }}" data-cart-url="{{ routes.cart_add_url }}.js" data-cart-redirect="{{ routes.cart_url }}" data-checkout-redirect="{{ routes.root_url }}checkout" data-next="{{ section.settings.purchase_destination }}" style="--wy-blue:{{ section.settings.blue }};--wy-red:{{ section.settings.red }};--wy-navy:{{ section.settings.navy }};--wy-width:{{ section.settings.max_width }}px">
+<svg class="wy-symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><symbol id="wy-{{ section.id }}-cart" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l3 13h12l3-9H6"/></symbol><symbol id="wy-{{ section.id }}-shield" viewBox="0 0 24 24"><path d="m12 2 9 4v6c0 5-9 10-9 10S3 17 3 12V6l9-4Z"/><path d="m8 12 3 3 5-6"/></symbol><symbol id="wy-{{ section.id }}-truck" viewBox="0 0 24 24"><path d="M1 5h13v13H1zM14 9h5l4 5v4h-9"/><circle cx="6" cy="19" r="2"/><circle cx="19" cy="19" r="2"/></symbol><symbol id="wy-{{ section.id }}-box" viewBox="0 0 24 24"><path d="m12 2 9 5v10l-9 5-9-5V7l9-5Zm0 10 9-5M12 12 3 7m9 5v10M7.5 4.5l9 5"/></symbol><symbol id="wy-{{ section.id }}-headset" viewBox="0 0 24 24"><path d="M4 13v-2a8 8 0 0 1 16 0v2M4 12H2v8h5v-8H4Zm16 0h2v8h-5v-8h3Zm0 8c0 2-4 3-8 3"/></symbol><symbol id="wy-{{ section.id }}-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 22l8.8-9.6a5.5 5.5 0 0 0 0-7.8Z"/></symbol><symbol id="wy-{{ section.id }}-return" viewBox="0 0 24 24"><path d="M3 10V4m0 6h6M4 8a9 9 0 1 1 1 12M12 7v6l4 2"/></symbol><symbol id="wy-{{ section.id }}-gift" viewBox="0 0 24 24"><rect x="3" y="9" width="18" height="13" rx="1"/><path d="M2 5h20v4H2zM12 5v17"/><path d="M12 5C2 6 4-3 9 2l3 3Zm0 0c10 1 8-8 3-3l-3 3Z"/></symbol><symbol id="wy-{{ section.id }}-drop" viewBox="0 0 24 24"><path d="M12 2S4 10 4 15a8 8 0 0 0 16 0c0-5-8-13-8-13Z"/><path d="M8 15a4 4 0 0 0 4 4"/></symbol><symbol id="wy-{{ section.id }}-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2"/></symbol><symbol id="wy-{{ section.id }}-leaf" viewBox="0 0 24 24"><path d="M21 3C8 2 2 7 4 15c7 9 17 2 17-12ZM3 22 17 8M9 16l-1-6m5 2 6 1"/></symbol><symbol id="wy-{{ section.id }}-bone" viewBox="0 0 24 24"><path d="M5 6c-4-1-5 4-2 5l10 9c0 5 7 4 6 0 4 1 5-5 1-6L10 5c0-5-6-5-5 1Z"/></symbol><symbol id="wy-{{ section.id }}-skin" viewBox="0 0 24 24"><path d="M6 22v-3l3-5 1-9a2 2 0 0 1 4 0l1 9 3 5v3M8 13h8M6 19h12M4 5l-2 3m18-3 2 3"/></symbol><symbol id="wy-{{ section.id }}-peptide" viewBox="0 0 24 24"><path d="m6 3 15 15M3 6 18 21M5 7l2-2m1 5 2-2m1 5 2-2m1 5 2-2m1 5 2-2M4 2 2 4m20 16-2 2"/></symbol><symbol id="wy-{{ section.id }}-flame" viewBox="0 0 24 24"><path d="M13 2c2 6-3 6-1 10 2-1 3-3 3-5 4 3 7 9 3 13a9 9 0 0 1-13-1C1 13 6 8 8 6c-1 5 2 6 2 6s-1-7 3-10Z"/></symbol><symbol id="wy-{{ section.id }}-check" viewBox="0 0 24 24"><path d="m5 12 4 4L20 5"/></symbol><symbol id="wy-{{ section.id }}-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="12" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol><symbol id="wy-{{ section.id }}-tag" viewBox="0 0 24 24"><path d="M21 13 13 21 2 10V2h8l11 11Z"/><circle cx="7" cy="7" r="1.5"/></symbol><symbol id="wy-{{ section.id }}-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol><symbol id="wy-{{ section.id }}-bolt" viewBox="0 0 24 24"><path d="m13 2-9 12h7l-1 8L21 9h-8l1-7Z"/></symbol><symbol id="wy-{{ section.id }}-home" viewBox="0 0 24 24"><path d="m2 11 10-9 10 9M5 9v13h5v-7h4v7h5V9"/></symbol><symbol id="wy-{{ section.id }}-star" viewBox="0 0 24 24"><path d="m12 2 3 6 7 1-5 5 1 8-6-4-6 4 1-8-5-5 7-1 3-6Z"/></symbol><symbol id="wy-{{ section.id }}-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M3 23v-3a9 9 0 0 1 18 0v3H3Z"/></symbol><symbol id="wy-{{ section.id }}-search" viewBox="0 0 24 24"><circle cx="10" cy="10" r="7"/><path d="m15 15 7 7"/></symbol></defs></svg>
+{% if mv_p == blank %}<p class="wy-empty">Bu bölümü bir ürün şablonunda kullanın.</p>{% else %}
+<nav class="wy-breadcrumb" aria-label="İçerik yolu"><a href="{{ routes.root_url }}" aria-label="Ana sayfa"><svg class="wy-icon " aria-hidden="true"><use href="#wy-{{ section.id }}-home"></use></svg></a><span aria-hidden="true">›</span><a href="{{ routes.all_products_collection_url }}">Ürünler</a><span aria-hidden="true">›</span>{% if mv_p.type != blank %}<span>{{ mv_p.type | escape }}</span><span aria-hidden="true">›</span>{% endif %}<span>{{ mv_p.title | escape }}</span></nav>
+<div class="wy-layout">
+ <div class="wy-main">
+  <div class="wy-gallery" aria-label="Ürün görselleri">
+   {% if mv_p.media.size > 1 %}<div class="wy-thumbnails" role="group" aria-label="Ürün görseli seçimi">{% for media in mv_p.media limit:12 %}<button type="button" class="wy-thumb{% if forloop.first %} is-active{% endif %}" data-mvpd-thumb="{{ media.id }}" aria-label="{{ forloop.index }}. görsel" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">{% if media.preview_image != blank %}{{ media.preview_image | image_url: width:160 | image_tag: loading:'lazy', alt:media.alt }}{% endif %}{% unless media.media_type == 'image' %}<span class="wy-play" aria-hidden="true">▶</span>{% endunless %}</button>{% endfor %}</div>{% endif %}
+   <div class="wy-viewer">
+    {% if section.settings.gallery_badge != blank %}<span class="wy-gallery-badge">{{ section.settings.gallery_badge | escape }}</span>{% endif %}
+    {% if section.settings.gallery_stamp != blank %}{{ section.settings.gallery_stamp | image_url:width:280 | image_tag:loading:'lazy',class:'wy-gallery-stamp' }}{% endif %}
+    {% for media in mv_p.media limit:12 %}
+     <div class="wy-slide{% if forloop.first %} is-active{% endif %}" data-mvpd-media="{{ media.id }}" {% unless forloop.first %}hidden{% endunless %}>
+      {% case media.media_type %}{% when 'image' %}{% assign image_loading = 'lazy' %}{% assign image_priority = 'auto' %}{% if forloop.first %}{% assign image_loading = 'eager' %}{% assign image_priority = 'high' %}{% endif %}{{ media | image_url:width:1400 | image_tag:loading:image_loading,fetchpriority:image_priority,widths:'360,540,750,1000,1400',sizes:'(max-width: 749px) 85vw, 32vw',alt:media.alt }}{% when 'video' %}{{ media | video_tag:controls:true,image_size:'1000x' }}{% when 'external_video' %}{{ media | external_video_tag }}{% else %}{{ media.preview_image | image_url:width:1200 | image_tag:loading:'lazy',alt:media.alt }}{% endcase %}
+     </div>
+    {% else %}{{ 'product-1' | placeholder_svg_tag:'wy-placeholder' }}{% endfor %}
+    <div class="wy-gallery-controls"><button type="button" data-mvpd-prev aria-label="Önceki görsel">‹</button><span data-mvpd-gallery-count aria-live="polite">1 / {{ mv_p.media.size | at_least:1 }}</span><button type="button" data-mvpd-next aria-label="Sonraki görsel">›</button></div>
+   </div>
+  </div>
+  <div class="wy-information">
+   <h1>{{ mv_p.title | escape }}</h1>
+   <div class="wy-rating-row">{% if wy_rating != blank and wy_count > 0 %}<span class="wy-stars" aria-hidden="true">★★★★★</span><strong>{{ wy_rating | escape }}</strong><span>({{ wy_count }} değerlendirme)</span>{% endif %}{% if section.settings.verified_seller %}<span class="wy-verified"><svg class="wy-icon " aria-hidden="true"><use href="#wy-{{ section.id }}-shield"></use></svg>{{ section.settings.verified_label | escape }}</span>{% endif %}</div>
+   {% if section.settings.subtitle != blank %}<h2>{{ section.settings.subtitle | escape }}</h2>{% endif %}
+   {% if section.settings.description != blank %}<p class="wy-description">{{ section.settings.description | escape | newline_to_br }}</p>{% endif %}
+   <div class="wy-benefits">{% for block in section.blocks %}{% if block.type == 'benefit' %}<div class="wy-benefit" {{ block.shopify_attributes }}><span class="wy-benefit-icon"><svg class="wy-icon" aria-hidden="true"><use href="#wy-{{ section.id }}-{{ block.settings.icon }}"></use></svg></span><div><strong>{{ block.settings.title | escape }}</strong><small>{{ block.settings.text | escape }}</small></div></div>{% endif %}{% endfor %}</div>
+   <div class="wy-ingredients">{% for block in section.blocks %}{% if block.type == 'ingredient' %}<div class="wy-ingredient wy-tone-{{ block.settings.tone }}" {{ block.shopify_attributes }}><span><svg class="wy-icon" aria-hidden="true"><use href="#wy-{{ section.id }}-{{ block.settings.icon }}"></use></svg></span><div><strong>{{ block.settings.title | escape }}</strong><small>{{ block.settings.text | escape }}</small></div></div>{% endif %}{% endfor %}</div>
+   {% if section.settings.why_points != blank %}<div class="wy-why"><h3><svg class="wy-icon " aria-hidden="true"><use href="#wy-{{ section.id }}-shield"></use></svg>{{ section.settings.why_title | escape }}</h3><ul>{% assign why_lines = section.settings.why_points | newline_to_br | split:'<br />' %}{% for line in why_lines %}{% assign trimmed = line | strip %}{% if trimmed != blank %}<li><span><svg class="wy-icon " aria-hidden="true"><use href="#wy-{{ section.id }}-check"></use></svg></span>{{ trimmed | escape }}</li>{% endif %}{% endfor %}</ul></div>{% endif %}
+  </div>
+ </div>
+ <aside class="wy-purchase" aria-label="Satın alma seçenekleri">
+  {% if section.settings.campaign_end != blank %}<div class="wy-campaign" data-wy-campaign data-end="{{ section.settings.campaign_end | escape }}" hidden><svg class="wy-icon " aria-hidden="true"><use href="#wy-{{ section.id }}-flame"></use></svg><div><strong>{{ section.settings.campaign_heading | escape }}</strong><small data-wy-campaign-note>Bu fiyatlar için kalan süre:</small></div><div class="wy-countdown" data-wy-clock role="group" aria-label="Kampanya bitişine kalan süre"><span><b data-wy-hours>00</b><small>Saat</small></span><span><b data-wy-minutes>00</b><small>Dakika</small></span><span><b data-wy-seconds>00</b><small>Saniye</small></span></div></div>{% endif %}
+  <div class="wy-buy-card">
+   {% if wy_count > 0 %}<p class="wy-review-count"><svg class="wy-icon " aria-hidden="true"><use href="#wy-{{ section.id }}-check"></use></svg>{{ wy_count }} kişi bu ürünü değerlendirdi</p>{% endif %}
+   <div class="wy-price-row"><strong data-wy-price>{{ mv_v.price | times:mv_min | money_without_trailing_zeros }}</strong><s data-wy-compare{% unless mv_v.compare_at_price > mv_v.price %} hidden{% endunless %}>{{ mv_v.compare_at_price | times:mv_min | money_without_trailing_zeros }}</s><span class="wy-discount" data-wy-discount hidden><b data-wy-percent></b><small>İndirim</small></span></div>
+   <div class="wy-stock"><p data-wy-stock-label>{% if mv_v.available %}Stokta{% else %}Tükendi{% endif %}</p><div class="wy-stock-track" data-wy-stock-track hidden><span data-wy-stock-fill></span></div></div>
+   {% form 'product', mv_p, id:mv_form_id, class:'wy-product-form' %}
+    {% unless mv_p.has_only_default_variant %}<label class="wy-label" for="wy-variant-{{ section.id }}">Seçenek</label><select id="wy-variant-{{ section.id }}" data-mvpd-variant name="id">{% for variant in mv_p.variants %}<option value="{{ variant.id }}"{% if variant.id == mv_v.id %} selected{% endif %}>{{ variant.title | escape }}{% unless variant.available %} — Tükendi{% endunless %}</option>{% endfor %}</select>{% endunless %}
+    <input type="hidden" name="id" value="{{ mv_v.id }}" data-mvpd-id{% unless mv_p.has_only_default_variant %} disabled{% endunless %}>
+    <div class="wy-quantity-row"><label for="wy-quantity-{{ section.id }}">Adet</label><div class="wy-quantity"><button type="button" data-mvpd-minus aria-label="Adedi azalt">−</button><input id="wy-quantity-{{ section.id }}" type="number" inputmode="numeric" name="quantity" data-mvpd-qty value="{{ mv_min }}" min="{{ mv_min }}" step="{{ mv_inc }}"{% if mv_v.quantity_rule.max != blank %} max="{{ mv_v.quantity_rule.max }}"{% endif %}><button type="button" data-mvpd-plus aria-label="Adedi artır">+</button></div><span class="wy-instock" data-wy-stock-badge{% unless mv_v.available %} hidden{% endunless %}>Stokta <svg class="wy-icon " aria-hidden="true"><use href="#wy-{{ section.id }}-check"></use></svg></span></div>
+    <button type="submit" class="wy-add" data-mvpd-add{% unless mv_v.available %} disabled{% endunless %}><svg class="wy-icon " aria-hidden="true"><use href="#wy-{{ section.id }}-cart"></use></svg><span data-mvpd-add-label>{% if mv_v.available %}{{ section.settings.add_label | escape }}{% else %}Tükendi{% endif %}</span><svg class="wy-icon " aria-hidden="true"><use href="#wy-{{ section.id }}-arrow"></use></svg></button>
+    <button type="button" class="wy-buy-now" data-wy-buy-now{% unless mv_v.available %} disabled{% endunless %}><svg class="wy-icon " aria-hidden="true"><use href="#wy-{{ section.id }}-bolt"></use></svg><span>{{ section.settings.buy_label | escape }}</span></button>
+   {% endform %}
+   <p class="wy-feedback" data-wy-status role="status" hidden></p><div class="wy-error" data-mvpd-error role="alert" hidden></div>
+   <details class="wy-cart-details"><summary>Sepeti görüntüle <span data-wy-cart-count>{{ cart.item_count | default:0 }}</span></summary><p data-mvpd-cart-check role="status">Sepet kontrol ediliyor…</p><div data-mvpd-live-cart-list hidden></div><div data-mvpd-summary-empty hidden><p>Sepetiniz boş.</p><button type="button" data-mvpd-base-restore>1 adet ekle</button></div><div class="wy-cart-total"><span>Sepet toplamı</span><strong data-mvpd-total>{{ cart.total_price | money_without_trailing_zeros }}</strong></div><a href="{{ routes.cart_url }}">Sepete git →</a></details>
+  </div>
+  {% if section.settings.show_trust %}<div class="wy-trust-grid"><div><span><svg class="wy-icon " aria-hidden="true"><use href="#wy-{{ section.id }}-truck"></use></svg></span><p><strong>{{ section.settings.shipping_title | escape }}</strong><small>{{ section.settings.shipping_note | escape }}</small></p></div><div><span><svg class="wy-icon " aria-hidden="true"><use href="#wy-{{ section.id }}-box"></use></svg></span><p><strong>{{ section.settings.dispatch_title | escape }}</strong><small>{{ section.settings.dispatch_note | escape }}</small></p></div><div><span><svg class="wy-icon " aria-hidden="true"><use href="#wy-{{ section.id }}-shield"></use></svg></span><p><strong>Güvenli Ödeme</strong><small>Shopify altyapısı</small></p></div><div><span><svg class="wy-icon " aria-hidden="true"><use href="#wy-{{ section.id }}-return"></use></svg></span><p><strong>{{ section.settings.return_title | escape }}</strong><small>{{ section.settings.return_note | escape }}</small></p></div><div><span><svg class="wy-icon " aria-hidden="true"><use href="#wy-{{ section.id }}-heart"></use></svg></span><p><strong>{{ section.settings.support_title | escape }}</strong><small>{{ section.settings.support_note | escape }}</small></p></div><div><span><svg class="wy-icon " aria-hidden="true"><use href="#wy-{{ section.id }}-gift"></use></svg></span><p><strong>{{ section.settings.authenticity_title | escape }}</strong><small>{{ section.settings.authenticity_note | escape }}</small></p></div></div>{% endif %}
+  <div class="wy-security"><div><span class="wy-security-shield"><svg class="wy-icon " aria-hidden="true"><use href="#wy-{{ section.id }}-shield"></use></svg></span><p><strong>{{ section.settings.security_title | escape }}</strong><small>{{ section.settings.security_note | escape }}</small></p></div>{% if shop.enabled_payment_types.size > 0 %}<ul class="wy-payments" role="list" aria-label="Ödeme yöntemleri">{% for type in shop.enabled_payment_types %}<li>{{ type | payment_type_svg_tag:class:'wy-payment-logo' }}</li>{% endfor %}</ul>{% endif %}</div>
+ </aside>
+ <div class="wy-lower">
+  {% if wy_pack_blocks.size > 0 %}<section class="wy-packages" aria-labelledby="wy-pack-title-{{ section.id }}"><div class="wy-section-bar"><h2 id="wy-pack-title-{{ section.id }}"><svg class="wy-icon " aria-hidden="true"><use href="#wy-{{ section.id }}-tag"></use></svg>{{ section.settings.pack_title | escape }}</h2><span>{{ section.settings.pack_note | escape }}</span></div><div class="wy-pack-grid">
+  {% for block in wy_pack_blocks %}{% liquid
+   assign pack_qty = block.settings.qty
+   assign pack_image = block.settings.image | default:mv_p.featured_image
+   assign pack_price = mv_v.price | times:pack_qty
+  %}<article class="wy-pack{% if block.settings.featured %} wy-pack-featured{% endif %}" data-mv-pack data-qty="{{ pack_qty }}" {{ block.shopify_attributes }}>{% if block.settings.featured %}<span class="wy-pack-ribbon">{{ section.settings.featured_label | escape }}</span>{% endif %}<div class="wy-pack-visual" aria-hidden="true">{% if pack_image != blank %}{% if block.settings.image != blank %}{{ pack_image | image_url:width:320 | image_tag:loading:'lazy',alt:'' }}{% else %}{% for copy in (1..pack_qty) limit:3 %}{{ pack_image | image_url:width:240 | image_tag:loading:'lazy',alt:'' }}{% endfor %}{% endif %}{% endif %}</div><div class="wy-pack-info"><h3>{{ block.settings.title | escape }}</h3>{% if block.settings.text != blank %}<p>{{ block.settings.text | escape }}</p>{% endif %}<div class="wy-pack-prices"><s data-wy-pack-old hidden></s><strong data-mv-pack-price>{{ pack_price | money_without_trailing_zeros }}</strong></div><small data-mv-pack-saving hidden></small></div><button type="button" data-mv-pack-select aria-pressed="false"{% unless mv_v.available %} disabled{% endunless %}>Seç</button></article>{% endfor %}
+  </div></section>{% endif %}
+  {% if wy_review_blocks.size > 0 %}<section class="wy-reviews" aria-labelledby="wy-review-title-{{ section.id }}"><div class="wy-review-heading"><h2 id="wy-review-title-{{ section.id }}"><svg class="wy-icon " aria-hidden="true"><use href="#wy-{{ section.id }}-star"></use></svg>{{ section.settings.reviews_heading | escape }}</h2>{% if section.settings.reviews_link != blank %}<a href="{{ section.settings.reviews_link }}">Tüm Yorumları Gör <svg class="wy-icon " aria-hidden="true"><use href="#wy-{{ section.id }}-arrow"></use></svg></a>{% endif %}</div><div class="wy-review-grid">{% for block in wy_review_blocks %}{% if block.settings.text != blank %}<article class="wy-review" {{ block.shopify_attributes }}>{% if block.settings.image != blank %}{{ block.settings.image | image_url:width:160 | image_tag:loading:'lazy',class:'wy-review-photo',alt:block.settings.name }}{% endif %}<div><span class="wy-review-stars" role="img" aria-label="5 üzerinden {{ block.settings.stars }} puan">{% for star in (1..5) %}<span{% if star > block.settings.stars %} class="wy-star-empty"{% endif %}>★</span>{% endfor %}</span><small class="wy-score">{{ block.settings.stars }}/5</small><p>“{{ block.settings.text | escape }}”</p><footer>{{ block.settings.name | escape }}{% if block.settings.date != blank %}<span> · {{ block.settings.date | escape }}</span>{% endif %}</footer></div></article>{% endif %}{% endfor %}</div></section>{% endif %}
+ </div>
+</div>
+{% for block in section.blocks %}{% if block.type == '@app' %}<div class="wy-app">{% render block %}</div>{% endif %}{% endfor %}
+{% endif %}
+{% capture wy_config %}{
+ "productId":{{ mv_p.id | json }},"checkoutLabel":{{ section.settings.buy_label | json }},"loadingLabel":{{ section.settings.loading_label | json }},"unitText":"adet","showCompare":true,"currency":{{ cart.currency.iso_code | default:shop.currency | json }},"addLabel":{{ section.settings.add_label | json }},"soldLabel":"Tükendi","manualSaving":null,"packLabel":"Seç","stockReference":{{ section.settings.stock_reference | json }},
+ "variants":[{% for variant in mv_p.variants %}{"id":{{ variant.id | json }},"price":{{ variant.price | json }},"compare":{{ variant.compare_at_price | default:0 | json }},"available":{{ variant.available | json }},"min":{{ variant.quantity_rule.min | default:1 | json }},"inc":{{ variant.quantity_rule.increment | default:1 | json }},"max":{% if variant.quantity_rule.max != blank %}{{ variant.quantity_rule.max | json }}{% else %}null{% endif %},"mediaId":{{ variant.featured_media.id | default:'' | json }},"title":{{ variant.title | json }},"inventory":{{ variant.inventory_quantity | default:0 | json }},"managed":{{ variant.inventory_management | json }},"policy":{{ variant.inventory_policy | json }}}{% unless forloop.last %},{% endunless %}{% endfor %}]
+}{% endcapture %}<script type="application/json" data-wy-config>{{ wy_config | replace:'<','\u003c' }}</script>
+</section>
+
+<style>
+#wy-product-{{ section.id }}{max-width:var(--wy-width);margin:0 auto;padding:12px 24px 28px;color:var(--wy-navy);background:#fff;font-family:var(--font-body--family,Arial,sans-serif);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}
+#wy-product-{{ section.id }} *,#wy-product-{{ section.id }} *::before,#wy-product-{{ section.id }} *::after{box-sizing:border-box}
+#wy-product-{{ section.id }} [hidden]{display:none!important}
+#wy-product-{{ section.id }} .wy-symbols{position:absolute;width:0;height:0;overflow:hidden}
+#wy-product-{{ section.id }} :is(h1,h2,h3,p){margin:0;overflow-wrap:anywhere}
+#wy-product-{{ section.id }} :is(button,input,select){font:inherit}
+#wy-product-{{ section.id }} button{cursor:pointer;touch-action:manipulation}
+#wy-product-{{ section.id }} button:disabled{opacity:.45;cursor:not-allowed}
+#wy-product-{{ section.id }} :is(button,a,input,select,summary):focus-visible{outline:3px solid var(--wy-blue);outline-offset:3px;box-shadow:0 0 0 5px #fff}
+#wy-product-{{ section.id }} .wy-icon{display:block;width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+#wy-product-{{ section.id }} .wy-breadcrumb{display:flex;align-items:center;flex-wrap:wrap;gap:10px;font-size:11px;margin-bottom:16px;color:#3e4b6c}
+#wy-product-{{ section.id }} .wy-breadcrumb a{color:inherit;text-decoration:none}
+#wy-product-{{ section.id }} .wy-breadcrumb .wy-icon{width:16px;height:16px}
+#wy-product-{{ section.id }} .wy-layout{display:grid;grid-template-columns:minmax(0,1fr) 450px;grid-template-areas:"main purchase" "lower purchase";gap:18px 24px;align-items:start}
+#wy-product-{{ section.id }} .wy-main{grid-area:main;display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.12fr);gap:24px;min-width:0}
+#wy-product-{{ section.id }} .wy-gallery{display:flex;gap:12px;min-width:0;align-items:stretch}
+#wy-product-{{ section.id }} .wy-thumbnails{display:flex;flex-direction:column;gap:9px;flex:0 0 62px;max-height:474px;overflow:auto;scrollbar-width:thin;padding:3px}
+#wy-product-{{ section.id }} .wy-thumb{display:block;position:relative;width:56px;height:67px;flex:0 0 67px;border:1px solid #e3e9f2;border-radius:9px;padding:2px;background:#f5f8fc;overflow:hidden}
+#wy-product-{{ section.id }} .wy-thumb.is-active{border:2px solid var(--wy-blue);box-shadow:0 0 0 1px #bfd8ff}
+#wy-product-{{ section.id }} .wy-thumb img{display:block;width:100%;height:100%;object-fit:cover;border-radius:5px}
+#wy-product-{{ section.id }} .wy-play{position:absolute;inset:0;display:grid;place-items:center;background:#071b5840;color:white}
+#wy-product-{{ section.id }} .wy-viewer{position:relative;min-width:0;flex:1;height:474px;border-radius:12px;overflow:hidden;background:#eef5fd;border:1px solid #e4ebf5}
+#wy-product-{{ section.id }} .wy-slide{position:absolute;inset:0;display:grid;place-items:center}
+#wy-product-{{ section.id }} .wy-slide :is(img,video,iframe){display:block;width:100%;height:100%;border:0;object-fit:{{ section.settings.image_fit }}}
+#wy-product-{{ section.id }} .wy-placeholder{width:100%;height:100%}
+#wy-product-{{ section.id }} .wy-gallery-badge{position:absolute;z-index:2;top:16px;left:12px;transform:rotate(-9deg);max-width:130px;padding:9px 13px;background:var(--wy-red);color:white;border-radius:12px;font-size:21px;line-height:1.05;font-weight:800;text-align:center;white-space:pre-line;box-shadow:0 5px 15px #98002329}
+#wy-product-{{ section.id }} .wy-gallery-stamp{position:absolute;z-index:2;top:0;right:8px;width:110px;height:125px;object-fit:contain}
+#wy-product-{{ section.id }} .wy-gallery-controls{position:absolute;z-index:2;bottom:10px;right:10px;display:flex;align-items:center;gap:8px;background:#fffffff0;padding:4px;border-radius:30px;font-size:10px;box-shadow:0 1px 7px #0c244315}
+#wy-product-{{ section.id }} .wy-gallery-controls button{width:28px;height:28px;display:grid;place-items:center;border:0;border-radius:50%;background:#ecf3ff;color:var(--wy-blue);font-size:20px}
+#wy-product-{{ section.id }} .wy-information{min-width:0}
+#wy-product-{{ section.id }} .wy-information h1{font-size:32px;line-height:1.1;letter-spacing:-.035em;font-weight:800;color:#09163d;margin:0 0 12px}
+#wy-product-{{ section.id }} .wy-rating-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px;font-size:13px;color:#3c4d70;margin-bottom:12px;min-height:0}
+#wy-product-{{ section.id }} .wy-rating-row:empty{display:none}
+#wy-product-{{ section.id }} .wy-rating-row>strong{font-size:19px;color:#26334d;letter-spacing:.01em}
+#wy-product-{{ section.id }} .wy-stars{color:#f3a000;letter-spacing:1px;font-size:21px;white-space:nowrap}
+#wy-product-{{ section.id }} .wy-verified{display:inline-flex;align-items:center;gap:5px;color:var(--wy-blue);background:#eaf2ff;border-radius:7px;padding:5px 8px;font-size:10px;font-weight:650}
+#wy-product-{{ section.id }} .wy-verified .wy-icon{width:17px;height:17px}
+#wy-product-{{ section.id }} .wy-information h2{font-size:20px;font-weight:750;line-height:1.3;margin:0 0 8px;letter-spacing:-.02em}
+#wy-product-{{ section.id }} .wy-description{font-size:15px;color:#3c4c6c;line-height:1.5}
+#wy-product-{{ section.id }} .wy-benefits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:24px 0 18px}
+#wy-product-{{ section.id }} .wy-benefit{display:flex;align-items:center;gap:7px;min-width:0}
+#wy-product-{{ section.id }} .wy-benefit-icon{display:grid;place-items:center;width:38px;height:38px;flex:0 0 38px;background:linear-gradient(145deg,#eff7ff,#d8ebff);border-radius:50%;color:#0074ed}
+#wy-product-{{ section.id }} .wy-benefit-icon .wy-icon{width:25px;height:25px}
+#wy-product-{{ section.id }} .wy-benefit strong,#wy-product-{{ section.id }} .wy-benefit small{display:block;font-size:10px;line-height:1.45}
+#wy-product-{{ section.id }} .wy-benefit strong{font-weight:750}
+#wy-product-{{ section.id }} .wy-benefit small{color:#465573;margin-top:2px}
+#wy-product-{{ section.id }} .wy-ingredients{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:15px}
+#wy-product-{{ section.id }} .wy-ingredient{display:flex;align-items:center;gap:7px;background:linear-gradient(130deg,#f5f9ff,#f9fbff);border:1px solid #edf2fa;border-radius:12px;padding:11px 7px;min-width:0}
+#wy-product-{{ section.id }} .wy-ingredient>span{display:grid;place-items:center;width:34px;height:34px;flex:0 0 34px;border-radius:50%;background:#ddecff;color:#0080ef}
+#wy-product-{{ section.id }} .wy-ingredient .wy-icon{width:24px;height:24px}
+#wy-product-{{ section.id }} .wy-ingredient strong,#wy-product-{{ section.id }} .wy-ingredient small{display:block;font-size:11px;line-height:1.4}
+#wy-product-{{ section.id }} .wy-tone-red>span{color:#e8395a;background:#ffe3e9}
+#wy-product-{{ section.id }} .wy-tone-orange>span{color:#e97f00;background:#fff0d8}
+#wy-product-{{ section.id }} .wy-tone-green>span{color:#168536;background:#e1f8e3}
+#wy-product-{{ section.id }} .wy-why{padding:13px 16px;background:linear-gradient(120deg,#edf5ff,#f4f8ff);border-radius:12px}
+#wy-product-{{ section.id }} .wy-why h3{display:flex;align-items:center;gap:8px;color:var(--wy-blue);font-size:16px;font-weight:750;margin-bottom:12px}
+#wy-product-{{ section.id }} .wy-why h3 .wy-icon{width:21px;height:21px}
+#wy-product-{{ section.id }} .wy-why ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px;padding:0;margin:0;list-style:none}
+#wy-product-{{ section.id }} .wy-why li{display:flex;gap:7px;align-items:flex-start;font-size:12px;line-height:1.5;color:#3e4d6d}
+#wy-product-{{ section.id }} .wy-why li>span{display:grid;place-items:center;flex:0 0 16px;width:16px;height:16px;border-radius:50%;background:var(--wy-blue);color:#fff;margin-top:1px}
+#wy-product-{{ section.id }} .wy-why li .wy-icon{width:12px;height:12px}
+#wy-product-{{ section.id }} .wy-purchase{grid-area:purchase;border:1px solid #e5eaf3;background:#fff;border-radius:14px;padding:12px;min-width:0;display:grid;gap:12px;position:sticky;top:12px}
+#wy-product-{{ section.id }} .wy-campaign{display:flex;gap:10px;align-items:center;background:linear-gradient(120deg,#fff0f3,#ffedf0);border-radius:12px;padding:12px;color:var(--wy-red)}
+#wy-product-{{ section.id }} .wy-campaign>.wy-icon{width:31px;height:36px;fill:currentColor;stroke:none}
+#wy-product-{{ section.id }} .wy-campaign>div:nth-child(2){flex:1;min-width:0}
+#wy-product-{{ section.id }} .wy-campaign strong{display:block;font-size:14px;line-height:1.3;font-weight:800}
+#wy-product-{{ section.id }} .wy-campaign small{display:block;font-size:10px;color:#39435e;margin-top:4px}
+#wy-product-{{ section.id }} .wy-countdown{display:flex;gap:5px;flex:none}
+#wy-product-{{ section.id }} .wy-countdown>span{display:grid;justify-items:center;min-width:39px;padding:5px 4px;border:1px solid #ffb3c1;border-radius:7px;background:#ffffffd9}
+#wy-product-{{ section.id }} .wy-countdown b{font-size:18px;line-height:1.1;font-weight:800;font-variant-numeric:tabular-nums}
+#wy-product-{{ section.id }} .wy-countdown small{font-size:8px;margin-top:2px}
+#wy-product-{{ section.id }} .wy-buy-card{border:1px solid #e8edf5;border-radius:13px;padding:16px 15px}
+#wy-product-{{ section.id }} .wy-review-count{display:flex;gap:7px;align-items:center;color:#0066c4;font-size:13px;font-weight:650;margin-bottom:13px}
+#wy-product-{{ section.id }} .wy-review-count .wy-icon{width:18px;height:18px;background:#0083e8;border-radius:50%;padding:3px;color:#fff}
+#wy-product-{{ section.id }} .wy-price-row{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;margin-bottom:8px;font-variant-numeric:tabular-nums}
+#wy-product-{{ section.id }} [data-wy-price]{font-size:44px;line-height:1.1;font-weight:800;letter-spacing:-.035em;color:var(--wy-red)}
+#wy-product-{{ section.id }} [data-wy-compare]{font-size:18px;font-weight:650;color:#67758f}
+#wy-product-{{ section.id }} .wy-discount{display:grid;justify-items:center;align-self:center;margin-left:auto;line-height:1.05;background:var(--wy-red);color:#fff;padding:7px 10px;border-radius:9px}
+#wy-product-{{ section.id }} .wy-discount b{font-size:20px;font-weight:800}
+#wy-product-{{ section.id }} .wy-discount small{font-size:11px;font-weight:700;margin-top:3px}
+#wy-product-{{ section.id }} .wy-stock{margin:12px 0 18px}
+#wy-product-{{ section.id }} .wy-stock p{font-size:13px;line-height:1.3;font-weight:750;color:#007a3a;margin-bottom:8px}
+#wy-product-{{ section.id }} .wy-stock-track{height:9px;border-radius:999px;background:#e9edf4;overflow:hidden}
+#wy-product-{{ section.id }} .wy-stock-track span{display:block;height:100%;border-radius:inherit;background:#00b565}
+#wy-product-{{ section.id }} .wy-product-form{margin:0;display:flex;flex-direction:column;gap:9px}
+#wy-product-{{ section.id }} .wy-label{font-size:12px;font-weight:650;margin-bottom:-2px}
+#wy-product-{{ section.id }} select{width:100%;min-width:0;min-height:40px;border:1px solid #dce4f0;border-radius:7px;background:#fff;color:var(--wy-navy);padding:8px 12px;font-size:12px}
+#wy-product-{{ section.id }} .wy-quantity-row{display:flex;align-items:center;gap:14px;margin:2px 0 3px}
+#wy-product-{{ section.id }} .wy-quantity-row>label{font-size:14px;font-weight:750}
+#wy-product-{{ section.id }} .wy-quantity{display:inline-flex;align-items:center;border:1px solid #dfe6f1;background:#f6f8fc;border-radius:8px;overflow:hidden;flex:none}
+#wy-product-{{ section.id }} .wy-quantity button{width:38px;height:40px;padding:0;border:0;background:transparent;color:var(--wy-navy);font-size:20px;font-weight:650}
+#wy-product-{{ section.id }} .wy-quantity input{width:43px;height:40px;min-width:0;border:0;border-inline:1px solid #e4eaf4;border-radius:0;background:#fff;color:var(--wy-navy);padding:0;text-align:center;font-size:15px;font-weight:700;appearance:textfield}
+#wy-product-{{ section.id }} .wy-quantity input::-webkit-inner-spin-button{appearance:none}
+#wy-product-{{ section.id }} .wy-instock{display:flex;align-items:center;gap:4px;margin-left:auto;padding:5px 8px;border-radius:7px;color:#007e3b;background:#e1f7e9;font-size:11px;font-weight:650}
+#wy-product-{{ section.id }} .wy-instock .wy-icon{width:15px;height:15px}
+#wy-product-{{ section.id }} .wy-add{display:flex;justify-content:center;align-items:center;gap:14px;width:100%;min-height:55px;padding:12px;background:linear-gradient(110deg,#ed002d,#de0025);border:1px solid transparent;border-radius:9px;color:#fff;font-size:21px;font-weight:750;transition:filter .2s ease,box-shadow .2s ease}
+#wy-product-{{ section.id }} .wy-add>.wy-icon:first-child{width:28px;height:28px}
+#wy-product-{{ section.id }} .wy-add>.wy-icon:last-child{width:18px;height:18px}
+#wy-product-{{ section.id }} .wy-buy-now{display:flex;justify-content:center;align-items:center;gap:12px;min-height:48px;border:1px solid transparent;border-radius:8px;background:#ffedf1;color:#d60027;font-size:18px;font-weight:750}
+#wy-product-{{ section.id }} .wy-buy-now .wy-icon{width:20px;height:23px;fill:currentColor;stroke:none}
+#wy-product-{{ section.id }} .wy-error{background:#fff0f1;color:#a3172b;border:1px solid #f2c5cb;border-radius:8px;padding:10px;margin-top:10px;font-size:12px}
+#wy-product-{{ section.id }} .wy-feedback{background:#e9f7ef;color:#166639;border-radius:7px;padding:9px 10px;font-size:12px;margin-top:10px}
+#wy-product-{{ section.id }} .wy-cart-details{font-size:11px;margin-top:13px;color:#405076}
+#wy-product-{{ section.id }} .wy-cart-details summary{cursor:pointer;min-height:28px}
+#wy-product-{{ section.id }} .wy-cart-details summary>span{display:inline-grid;place-items:center;border-radius:20px;background:#edf3ff;color:var(--wy-blue);font-size:10px;min-width:18px;height:18px;margin-left:4px}
+#wy-product-{{ section.id }} .wy-cart-details>a{display:block;color:var(--wy-blue);margin-top:9px}
+#wy-product-{{ section.id }} .wy-cart-total{display:flex;justify-content:space-between;border-top:1px solid #e2e9f5;padding-top:10px;margin-top:10px}
+#wy-product-{{ section.id }} .mvpd__summary-item{display:grid;grid-template-columns:36px 1fr auto;gap:8px;padding:10px 0;border-bottom:1px solid #ecf0f7;align-items:start}
+#wy-product-{{ section.id }} .mvpd__summary-photo{width:36px;height:43px;object-fit:contain;border-radius:5px;background:#f4f7fc}
+#wy-product-{{ section.id }} .mvpd__summary-product strong,#wy-product-{{ section.id }} .mvpd__summary-product small{display:block;font-size:10px}
+#wy-product-{{ section.id }} .mvpd__bundle-remove{border:0;background:none;color:#51668b;font-size:10px;text-decoration:underline;padding:4px 0}
+#wy-product-{{ section.id }} .mvpd__summary-item-price{text-align:right;font-size:10px}
+#wy-product-{{ section.id }} .mvpd__summary-item-price>span,#wy-product-{{ section.id }} .mvpd__summary-item-price>strong{display:block}
+#wy-product-{{ section.id }} .wy-trust-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:19px 9px;padding:14px 7px;border:1px solid #e8edf5;border-radius:12px}
+#wy-product-{{ section.id }} .wy-trust-grid>div{display:flex;gap:7px;align-items:center;min-width:0}
+#wy-product-{{ section.id }} .wy-trust-grid>div>span{display:grid;place-items:center;flex:0 0 31px;width:31px;height:36px;border-radius:50%;color:#0082ef;background:#f3faff}
+#wy-product-{{ section.id }} .wy-trust-grid .wy-icon{width:22px;height:22px}
+#wy-product-{{ section.id }} .wy-trust-grid strong,#wy-product-{{ section.id }} .wy-trust-grid small{display:block;font-size:10px;line-height:1.5}
+#wy-product-{{ section.id }} .wy-trust-grid small{font-size:9px;color:#51617f;margin-top:2px}
+#wy-product-{{ section.id }} .wy-security{background:linear-gradient(120deg,#fffcf2,#fcfbf7);border:1px solid #f0e5ca;border-radius:12px;padding:14px}
+#wy-product-{{ section.id }} .wy-security>div{display:flex;gap:14px;align-items:flex-start}
+#wy-product-{{ section.id }} .wy-security-shield{display:grid;place-items:center;width:47px;height:49px;flex:none;border-radius:12px;background:linear-gradient(110deg,#b17c00,#926000);color:#fff}
+#wy-product-{{ section.id }} .wy-security-shield .wy-icon{width:32px;height:34px}
+#wy-product-{{ section.id }} .wy-security strong{display:block;font-size:13px;color:#805000;font-weight:750;margin-bottom:5px}
+#wy-product-{{ section.id }} .wy-security small{display:block;font-size:11px;line-height:1.5;color:#47516b}
+#wy-product-{{ section.id }} .wy-payments{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;list-style:none;margin:13px 0 0;padding:0}
+#wy-product-{{ section.id }} .wy-payments li{display:grid;place-items:center;background:#fff;border:1px solid #edf0f4;border-radius:7px;width:55px;height:34px;padding:4px}
+#wy-product-{{ section.id }} .wy-payment-logo{max-width:100%;width:43px;height:24px}
+#wy-product-{{ section.id }} .wy-lower{grid-area:lower;min-width:0;display:grid;gap:13px}
+#wy-product-{{ section.id }} .wy-section-bar{display:flex;gap:12px;align-items:center;justify-content:space-between;border-radius:10px;background:linear-gradient(90deg,#fff0f3,#fff6f7);padding:9px 12px;color:var(--wy-red);margin-bottom:10px}
+#wy-product-{{ section.id }} .wy-section-bar h2{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:750;line-height:1.3}
+#wy-product-{{ section.id }} .wy-section-bar .wy-icon{fill:currentColor;stroke:#fff;stroke-width:1.2}
+#wy-product-{{ section.id }} .wy-section-bar>span{font-size:11px;text-align:right}
+#wy-product-{{ section.id }} .wy-pack-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+#wy-product-{{ section.id }} .wy-pack{display:grid;grid-template-columns:minmax(65px,.85fr) minmax(0,1.15fr);position:relative;align-items:center;gap:7px 9px;padding:14px 12px 12px;border:1px solid #e4eaf4;border-radius:12px;background:#fff;min-width:0;min-height:124px}
+#wy-product-{{ section.id }} .wy-pack-featured,#wy-product-{{ section.id }} .wy-pack.is-summary-selected{border:1.5px solid var(--wy-red)}
+#wy-product-{{ section.id }} .wy-pack-ribbon{position:absolute;z-index:2;top:-11px;left:50%;transform:translateX(-50%);white-space:nowrap;max-width:94%;padding:3px 15px;border-radius:30px;background:linear-gradient(#ff263f,#e70027);color:#fff;font-size:11px;font-weight:700;line-height:1.5;overflow:hidden;text-overflow:ellipsis}
+#wy-product-{{ section.id }} .wy-pack-visual{grid-column:1;grid-row:1/3;height:85px;display:flex;justify-content:center;align-items:center;overflow:hidden;min-width:0;isolation:isolate}
+#wy-product-{{ section.id }} .wy-pack-visual img{display:block;max-width:80%;width:auto;height:95%;object-fit:contain;position:relative;mix-blend-mode:multiply}
+#wy-product-{{ section.id }} .wy-pack-visual img+img{margin-left:-35%;height:90%;transform:translateY(-3px)}
+#wy-product-{{ section.id }} .wy-pack-info{min-width:0;align-self:start}
+#wy-product-{{ section.id }} .wy-pack-info h3{font-size:15px;line-height:1.3;font-weight:750}
+#wy-product-{{ section.id }} .wy-pack-info>p{font-size:12px;color:#445471;line-height:1.4;margin:2px 0 7px}
+#wy-product-{{ section.id }} .wy-pack-prices{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px;margin-top:7px}
+#wy-product-{{ section.id }} .wy-pack-prices>s{font-size:11px;color:#566581}
+#wy-product-{{ section.id }} .wy-pack-prices>strong{font-size:22px;line-height:1.1;font-weight:800;letter-spacing:-.025em;color:var(--wy-red)}
+#wy-product-{{ section.id }} [data-mv-pack-saving]{display:block;font-size:9px;color:#247343;margin-top:3px}
+#wy-product-{{ section.id }} .wy-pack>button{grid-column:2;min-height:32px;justify-self:stretch;border:1px solid var(--wy-blue);border-radius:7px;padding:5px 10px;color:var(--wy-blue);background:#fff;font-size:12px;font-weight:650}
+#wy-product-{{ section.id }} .wy-pack.is-summary-selected>button{background:var(--wy-red);color:#fff;border-color:var(--wy-red)}
+#wy-product-{{ section.id }} .wy-reviews{padding:10px;background:linear-gradient(120deg,#f4f9ff,#edf5ff);border-radius:12px}
+#wy-product-{{ section.id }} .wy-review-heading{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:0 6px 9px}
+#wy-product-{{ section.id }} .wy-review-heading h2{display:flex;align-items:center;gap:8px;font-size:14px;line-height:1.3;color:#0044c5;font-weight:750}
+#wy-product-{{ section.id }} .wy-review-heading a{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--wy-blue);text-decoration:none;font-weight:650}
+#wy-product-{{ section.id }} .wy-review-heading .wy-icon{width:19px;height:19px}
+#wy-product-{{ section.id }} .wy-review-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+#wy-product-{{ section.id }} .wy-review{display:flex;gap:10px;align-items:flex-start;padding:10px;background:white;border-radius:11px;min-width:0}
+#wy-product-{{ section.id }} .wy-review-photo{display:block;flex:none;width:56px;height:62px;object-fit:cover;border-radius:50%}
+#wy-product-{{ section.id }} .wy-review>div{min-width:0}
+#wy-product-{{ section.id }} .wy-review-stars{font-size:15px;letter-spacing:0;color:#ee9800;white-space:nowrap}
+#wy-product-{{ section.id }} .wy-star-empty{color:#d5dbe6}
+#wy-product-{{ section.id }} .wy-score{font-size:9px;margin-left:6px}
+#wy-product-{{ section.id }} .wy-review p{font-size:11px;color:#354663;line-height:1.55;margin:4px 0 6px}
+#wy-product-{{ section.id }} .wy-review footer{font-size:10px;color:#3f5071}
+#wy-product-{{ section.id }} .wy-review footer>span{color:#61728e}
+#wy-product-{{ section.id }} .wy-empty{padding:45px 20px;text-align:center;border:1px dashed #c8d7ee;border-radius:12px}
+#wy-product-{{ section.id }} .wy-app{margin-top:20px}
+@media(hover:hover){#wy-product-{{ section.id }} .wy-add:hover:not(:disabled){filter:brightness(.94);box-shadow:0 4px 14px #e6002825}#wy-product-{{ section.id }} .wy-thumb:hover{border-color:var(--wy-blue)}}
+@media(min-width:1700px){#wy-product-{{ section.id }} .wy-layout{grid-template-columns:minmax(0,1fr) 450px}#wy-product-{{ section.id }} .wy-viewer{height:490px}}
+@media(max-width:1399px){#wy-product-{{ section.id }} .wy-layout{grid-template-columns:minmax(0,1fr) 355px;gap:18px}#wy-product-{{ section.id }} .wy-main{gap:17px}#wy-product-{{ section.id }} .wy-thumbnails{flex-basis:51px}#wy-product-{{ section.id }} .wy-thumb{width:45px;height:57px;flex-basis:57px}#wy-product-{{ section.id }} .wy-gallery{gap:7px}#wy-product-{{ section.id }} .wy-information h1{font-size:27px}#wy-product-{{ section.id }} .wy-information h2{font-size:18px}#wy-product-{{ section.id }} .wy-description{font-size:12px}#wy-product-{{ section.id }} .wy-benefits{gap:8px;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:16px}#wy-product-{{ section.id }} .wy-ingredients{grid-template-columns:repeat(2,minmax(0,1fr))}#wy-product-{{ section.id }} .wy-why ul{grid-template-columns:1fr}#wy-product-{{ section.id }} .wy-campaign{padding:9px;gap:6px}#wy-product-{{ section.id }} .wy-campaign strong{font-size:12px}#wy-product-{{ section.id }} .wy-campaign>.wy-icon{width:24px}#wy-product-{{ section.id }} .wy-countdown>span{min-width:30px}#wy-product-{{ section.id }} .wy-trust-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#wy-product-{{ section.id }} .wy-pack{grid-template-columns:60px minmax(0,1fr);padding:13px 8px;gap:6px}#wy-product-{{ section.id }} .wy-pack-prices>strong{font-size:20px}#wy-product-{{ section.id }} .wy-pack-visual{height:73px}}
+@media(max-width:1099px){#wy-product-{{ section.id }} .wy-layout{grid-template-columns:minmax(0,1fr) 330px}#wy-product-{{ section.id }} .wy-main{grid-template-columns:1fr}#wy-product-{{ section.id }} .wy-viewer{height:420px}#wy-product-{{ section.id }} .wy-benefits{grid-template-columns:repeat(4,minmax(0,1fr))}#wy-product-{{ section.id }} .wy-benefit{display:block;text-align:center}#wy-product-{{ section.id }} .wy-benefit-icon{margin:0 auto 5px}#wy-product-{{ section.id }} .wy-ingredients{grid-template-columns:repeat(2,minmax(0,1fr))}#wy-product-{{ section.id }} .wy-pack-grid{gap:9px}#wy-product-{{ section.id }} .wy-pack{display:flex;flex-direction:column;text-align:center;padding:16px 8px 10px}#wy-product-{{ section.id }} .wy-pack-visual{width:100%;height:85px}#wy-product-{{ section.id }} .wy-pack-info{align-self:auto}#wy-product-{{ section.id }} .wy-pack-prices{justify-content:center}#wy-product-{{ section.id }} .wy-pack>button{width:100%;margin-top:auto}#wy-product-{{ section.id }} .wy-section-bar{flex-wrap:wrap}#wy-product-{{ section.id }} .wy-section-bar h2{font-size:15px}#wy-product-{{ section.id }} .wy-pack-ribbon{font-size:8px;padding-inline:8px}#wy-product-{{ section.id }} .wy-review-grid{grid-template-columns:1fr}#wy-product-{{ section.id }} .wy-why ul{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:749px){#wy-product-{{ section.id }}{padding:12px 14px 28px}#wy-product-{{ section.id }} .wy-layout{grid-template-columns:1fr;grid-template-areas:"main" "purchase" "lower";gap:18px}#wy-product-{{ section.id }} .wy-main{gap:20px}#wy-product-{{ section.id }} .wy-gallery{flex-direction:column-reverse;gap:9px}#wy-product-{{ section.id }} .wy-thumbnails{flex-direction:row;flex:0 0 auto;max-height:none;gap:8px}#wy-product-{{ section.id }} .wy-thumb{flex:0 0 56px;width:56px;height:61px}#wy-product-{{ section.id }} .wy-viewer{height:auto;flex:none;aspect-ratio:1/1.08;border-radius:12px}#wy-product-{{ section.id }} .wy-breadcrumb{font-size:10px;gap:7px;margin-bottom:12px}#wy-product-{{ section.id }} .wy-information h1{font-size:29px}#wy-product-{{ section.id }} .wy-information h2{font-size:18px}#wy-product-{{ section.id }} .wy-description{font-size:13px}#wy-product-{{ section.id }} .wy-rating-row{font-size:11px}#wy-product-{{ section.id }} .wy-stars{font-size:19px}#wy-product-{{ section.id }} .wy-benefits{gap:8px}#wy-product-{{ section.id }} .wy-benefit strong,#wy-product-{{ section.id }} .wy-benefit small{font-size:9px}#wy-product-{{ section.id }} .wy-ingredients{grid-template-columns:repeat(2,minmax(0,1fr))}#wy-product-{{ section.id }} .wy-why{padding:13px}#wy-product-{{ section.id }} .wy-why h3{font-size:15px}#wy-product-{{ section.id }} .wy-why ul{gap:9px}#wy-product-{{ section.id }} .wy-why li{font-size:10px}#wy-product-{{ section.id }} .wy-purchase{position:static;padding:10px}#wy-product-{{ section.id }} .wy-campaign{gap:9px;padding:11px}#wy-product-{{ section.id }} .wy-campaign strong{font-size:13px}#wy-product-{{ section.id }} .wy-countdown>span{min-width:34px}#wy-product-{{ section.id }} [data-wy-price]{font-size:41px}#wy-product-{{ section.id }} .wy-buy-card{padding:15px 13px}#wy-product-{{ section.id }} .wy-quantity-row{gap:12px}#wy-product-{{ section.id }} .wy-quantity button,#wy-product-{{ section.id }} .wy-quantity input{height:44px}#wy-product-{{ section.id }} select,#wy-product-{{ section.id }} .wy-quantity input{font-size:16px}#wy-product-{{ section.id }} select{min-height:44px}#wy-product-{{ section.id }} .wy-trust-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 8px}#wy-product-{{ section.id }} .wy-trust-grid>div{display:block;text-align:center}#wy-product-{{ section.id }} .wy-trust-grid>div>span{margin:0 auto 6px}#wy-product-{{ section.id }} .wy-trust-grid strong,#wy-product-{{ section.id }} .wy-trust-grid small{font-size:9px}#wy-product-{{ section.id }} .wy-section-bar{padding:10px}#wy-product-{{ section.id }} .wy-section-bar h2{font-size:15px}#wy-product-{{ section.id }} .wy-section-bar>span{font-size:10px}#wy-product-{{ section.id }} .wy-pack-grid{gap:8px}#wy-product-{{ section.id }} .wy-pack{min-height:188px;padding:15px 7px 9px;gap:7px;border-radius:9px}#wy-product-{{ section.id }} .wy-pack-visual{height:78px}#wy-product-{{ section.id }} .wy-pack-info h3{font-size:13px}#wy-product-{{ section.id }} .wy-pack-info>p{font-size:10px}#wy-product-{{ section.id }} .wy-pack-prices>strong{font-size:20px;overflow-wrap:anywhere}#wy-product-{{ section.id }} .wy-pack>button{min-height:40px;font-size:11px}#wy-product-{{ section.id }} .wy-pack-ribbon{font-size:8px}#wy-product-{{ section.id }} .wy-review-heading h2{font-size:13px}#wy-product-{{ section.id }} .wy-review-heading a{font-size:10px}#wy-product-{{ section.id }} .wy-review-grid{grid-template-columns:1fr}#wy-product-{{ section.id }} .wy-review p{font-size:12px}#wy-product-{{ section.id }} .wy-review footer{font-size:10px}#wy-product-{{ section.id }} .wy-gallery-controls button{width:34px;height:34px}}
+@media(max-width:359px){#wy-product-{{ section.id }} .wy-campaign>.wy-icon{display:none}#wy-product-{{ section.id }} .wy-countdown>span{min-width:29px}#wy-product-{{ section.id }} .wy-quantity-row{gap:8px}#wy-product-{{ section.id }} .wy-quantity button{width:33px}#wy-product-{{ section.id }} .wy-quantity input{width:35px}#wy-product-{{ section.id }} .wy-pack-prices>strong{font-size:18px}#wy-product-{{ section.id }} .wy-pack-ribbon{font-size:7px;padding-inline:5px}#wy-product-{{ section.id }} .wy-pack-info h3{font-size:12px}}
+@media(prefers-reduced-motion:reduce){#wy-product-{{ section.id }} *,#wy-product-{{ section.id }} *::before,#wy-product-{{ section.id }} *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media(forced-colors:active){#wy-product-{{ section.id }} button{border:1px solid ButtonText}#wy-product-{{ section.id }} .wy-pack.is-summary-selected{outline:2px solid Highlight}}
+</style>
+
+<script>
+(() => {
+  if(window.__WytaminProduct){window.__WytaminProduct.scan(document);return;}
+  const instances=new Map();
+  function initialize(section){
+    if(instances.has(section)||!section.querySelector('.wy-product-form'))return;
+    const configElement=section.querySelector('[data-wy-config]');
+    if(!configElement)return;
+    const config=JSON.parse(configElement.textContent);
+    const controller=new AbortController();
+    const listen=(target,type,handler)=>target.addEventListener(type,handler,{signal:controller.signal});
+  const $ = selector => section.querySelector(selector);
+  const $$ = selector => Array.from(section.querySelectorAll(selector));
+  const root = (section.dataset.rootUrl || '/').replace(/\/?$/, '/');
+  const productId = config.productId;
+  const variants = config.variants;
+  const variantSelect = $('[data-mvpd-variant]');
+  const variantHidden = $('[data-mvpd-id]');
+  const qtyInput = $('[data-mvpd-qty]');
+  const checkout = $('[data-mvpd-checkout]');
+  const checkoutLabel = $('[data-mvpd-checkout-label]');
+  const originalCheckoutLabel = config.checkoutLabel;
+  const checkoutLoading = config.loadingLabel;
+  const unitText = config.unitText;
+  const showCompare = config.showCompare;
+  const packs = $$('[data-mv-pack]');
+  const cartList = $('[data-mvpd-live-cart-list]');
+  const cartCheck = $('[data-mvpd-cart-check]');
+  const errorBox = $('[data-mvpd-error]');
+  const cartURL = root + 'cart.js';
+  let cart = null;
+  let busy = false;
+  let loadSerial = 0;
+  let mutationSerial = 0;
+  let needsRefresh = false;
+  const add = $('[data-mvpd-add]');
+  const form = $('.wy-product-form');
+  const formatterCache = new Map();
+  let currency = config.currency;
+
+  function cash(cents) {
+    const locale = document.documentElement.lang || 'tr-TR';
+    const key = locale + ':' + currency + ':' + (Number(cents)%100===0?0:2);
+    try {
+      if (!formatterCache.has(key)) formatterCache.set(key, new Intl.NumberFormat(locale, {style:'currency',currency:currency||'TRY',minimumFractionDigits:Number(cents)%100===0?0:2,maximumFractionDigits:2}));
+      return formatterCache.get(key).format((Number(cents)||0)/100);
+    } catch { return ((Number(cents)||0)/100).toFixed(2); }
+  }
+  function showStatus(text){const el=$('[data-wy-status]');if(el){el.textContent=text;el.hidden=!text;}}
+  function updateOffer(){
+    const variant=selectedVariant();if(!variant)return;
+    const quantity=Number(qtyInput?.value)||variant.min||1;
+    const lines=cartProductLines().filter(line=>String(line.variant_id)===String(variant.id));
+    const actual=lines.reduce((sum,line)=>sum+line.quantity,0)===quantity;
+    const gross=variant.price*quantity;
+    const net=actual?lines.reduce((sum,line)=>sum+Number(line.final_line_price??line.line_price??0),0):gross;
+    const before=Math.max(gross,variant.compare*quantity);
+    set('[data-wy-price]',cash(net));set('[data-wy-compare]',cash(before));
+    visible('[data-wy-compare]',before>net);visible('[data-wy-discount]',before>net);
+    if(before>net)set('[data-wy-percent]','%'+Math.round((before-net)*100/before));
+    set('[data-wy-stock-label]',!variant.available?'Bu seçenek tükendi.':variant.managed&&variant.policy!=='continue'&&variant.inventory>0?'Stokta son '+variant.inventory+' adet!':'Stokta');
+    visible('[data-wy-stock-badge]',variant.available);
+    const tracked=Boolean(variant.managed&&variant.policy!=='continue'&&variant.inventory>0);
+    visible('[data-wy-stock-track]',tracked);
+    const fill=$('[data-wy-stock-fill]');if(fill)fill.style.width=Math.min(100,Math.max(3,variant.inventory/Math.max(1,config.stockReference)*100))+'%';
+    const buy=$('[data-wy-buy-now]');if(buy)buy.disabled=busy||!variant.available;
+    set('[data-wy-cart-count]',cart?.item_count||0);
+    document.querySelectorAll('[data-wy-header-count]').forEach(el=>{el.textContent=cart?.item_count||0;el.hidden=!cart?.item_count;});
+    packs.forEach(card=>{
+      const count=Number(card.dataset.qty);
+      const selected=lines.reduce((sum,line)=>sum+line.quantity,0)===count;
+      const current=selected?lines.reduce((sum,line)=>sum+Number(line.final_line_price??line.line_price??0),0):variant.price*count;
+      const old=Math.max(variant.compare,variant.price)*count;
+      const oldLabel=card.querySelector('[data-wy-pack-old]');if(oldLabel){oldLabel.textContent=cash(old);oldLabel.hidden=old<=current;}
+    });
+  }
+  function selectedVariant() {
+    return variants.find(v=>String(v.id)===String(variantSelect?.value || variantHidden?.value)) || variants[0];
+  }
+  function set(selector,value) {const el=$(selector);if(el)el.textContent=value;}
+  function visible(selector,on) {const el=$(selector);if(el)el.hidden=!on;}
+  function showError(text) {if(errorBox){errorBox.textContent=text;errorBox.hidden=!text;}}
+  function cartProductLines() {return cart?.items?.filter(item=>Number(item.product_id)===Number(productId) && !item.selling_plan_allocation && !item.parent_relationship && !Object.keys(item.properties||{}).length)||[];}
+  function countProduct() {return cartProductLines().reduce((sum,item)=>sum+item.quantity,0);}
+  function syncHeader(count) {
+    document.querySelectorAll('cart-icon').forEach(icon=>{try{icon.renderCartBubble?.(count,false);}catch(e){}});
+    document.querySelectorAll('.cart-bubble').forEach(el=>{el.classList.toggle('visually-hidden',count===0);const countEl=el.querySelector('.cart-bubble__text-count');if(countEl){countEl.textContent=count<100?String(count):'';countEl.classList.toggle('hidden',count===0);}});
+    try {sessionStorage.setItem('cart-count',JSON.stringify({value:String(count),timestamp:Date.now()}));}catch(e){}
+    document.dispatchEvent(new CustomEvent('mv:cart-updated',{detail:{itemCount:count}}));
+  }
+  function showPreview() {
+    const v=selectedVariant(); if(!v)return;
+    if(variantHidden)variantHidden.value=v.id;
+    set('[data-mvpd-unit]',cash(v.price));
+    set('[data-mvpd-old]',cash(v.compare));visible('[data-mvpd-old]',showCompare && v.compare>v.price);
+    if(qtyInput){qtyInput.min=v.min;qtyInput.step=v.inc;if(v.max)qtyInput.max=v.max;else qtyInput.removeAttribute('max');}
+    const saving = Math.max(0, v.compare - v.price);
+    if (config.manualSaving) set('[data-mvpd-save-amount]', config.manualSaving);
+    else set('[data-mvpd-save-amount]', cash(saving));
+    visible('[data-mvpd-save]', Boolean(config.manualSaving || saving > 0));
+    set('[data-mvpd-add-label]', v.available ? config.addLabel : config.soldLabel);
+    if (add) add.disabled = busy || !v.available;
+    set('[data-mvpd-selected-title]',v.title === 'Default Title' ? '' : v.title);
+
+    packs.forEach(card=>{
+      const qty=Number(card.dataset.qty);
+      const allow=v.available&&qty>=v.min&&(!v.max||qty<=v.max)&&(qty-v.min)%v.inc===0;
+      const btn=card.querySelector('[data-mv-pack-select]');if(btn)btn.disabled=!allow||busy;
+      const total=card.querySelector('[data-mv-pack-price]');if(total)total.textContent=cash(v.price*qty);
+      const unit=card.querySelector('[data-mv-pack-unit]');if(unit)unit.textContent=cash(v.price)+' / '+unitText;
+      const saving=card.querySelector('[data-mv-pack-saving]');if(saving){saving.hidden=true;saving.textContent='';}
+    });
+    if(cart)renderCart(cart);
+    updateOffer();
+  }
+  function itemImage(item) {return item.image||item.featured_image?.url||'';}
+  function makeRow(item){
+    const row=document.createElement('div');row.className='mvpd__summary-item mvpd__real-cart-item';
+    const photo=document.createElement('img');photo.className='mvpd__summary-photo';photo.width=52;photo.height=52;photo.alt='';photo.loading='lazy';
+    if(itemImage(item))photo.src=itemImage(item);else photo.hidden=true;
+    const description=document.createElement('div');description.className='mvpd__summary-product';
+    const name=document.createElement('strong');name.textContent=item.product_title||item.title||'Ürün';
+    const variant=document.createElement('small');variant.textContent=item.variant_title&&item.variant_title!=='Default Title'?item.variant_title:'';
+    const remove=document.createElement('button');remove.className='mvpd__bundle-remove';remove.type='button';remove.dataset.mvRemoveKey=item.key;remove.textContent='Kaldır';remove.setAttribute('aria-label',(item.product_title||item.title||'Ürün')+' ürününü sepetten kaldır');remove.disabled=busy;
+    description.append(name,variant,remove);
+    const price=document.createElement('div');price.className='mvpd__summary-item-price';
+    const quantity=document.createElement('span');quantity.textContent=item.quantity+' '+unitText;
+    const amount=document.createElement('strong');amount.textContent=cash(item.final_line_price??item.line_price??0);
+    price.append(quantity,amount);row.append(photo,description,price);
+    return row;
+  }
+  function renderCart(nextCart){
+    cart=nextCart;currency=nextCart.currency||currency;
+    const selectedCount=countProduct();
+    const productLines=cartProductLines();
+    if(cartList){cartList.replaceChildren(...(nextCart.items||[]).map(makeRow));cartList.hidden=!(nextCart.items||[]).length;}
+    visible('[data-mvpd-base-summary]',false);
+    visible('[data-mvpd-bundle-summary]',false);
+    visible('[data-mvpd-summary-empty]',!(nextCart.items||[]).length);
+    if(cartCheck){cartCheck.hidden=true;}
+    const before=Number(nextCart.original_total_price??nextCart.total_price??0);
+    const total=Number(nextCart.total_price??0);
+    const discount=Math.max(0,before-total);
+    set('[data-mvpd-subtotal]',cash(before));
+    set('[data-mvpd-discount]',discount?'-'+cash(discount):cash(0));
+    visible('[data-mvpd-discount-row]',discount>0);
+    set('[data-mvpd-total]',cash(total));
+    set('[data-mvpd-savings-amount]',cash(discount));
+    visible('[data-mvpd-savings]',discount>0);
+    const v=selectedVariant();
+    packs.forEach(card=>{
+      const qty=Number(card.dataset.qty);
+      const chosen=productLines.length>0 && productLines.every(line=>Number(line.variant_id)===Number(v?.id)) && productLines.reduce((sum,line)=>sum+line.quantity,0)===qty;
+      card.classList.toggle('is-summary-selected',chosen);
+      const btn=card.querySelector('[data-mv-pack-select]');
+      if(btn){btn.setAttribute('aria-pressed',String(chosen));btn.textContent=chosen?'✓ Seçildi':config.packLabel;btn.disabled=busy||!v?.available||qty<v.min||(v.max&&qty>v.max)||(qty-v.min)%v.inc!==0;}
+      const price=card.querySelector('[data-mv-pack-price]');
+      const saving=card.querySelector('[data-mv-pack-saving]');
+      const line=chosen?productLines[0]:null;
+      const net=chosen?productLines.reduce((sum,line)=>sum+Number(line.final_line_price??line.line_price),0):v.price*qty;
+      if(price)price.textContent=cash(net);
+      if(saving){const actual=chosen?Math.max(0,productLines.reduce((sum,line)=>sum+Number(line.original_line_price??line.line_price),0)-net):0;saving.hidden=!actual;saving.textContent=actual?'Shopify indirimi: -'+cash(actual):'';}
+    });
+    if(qtyInput && selectedCount>0 && productLines.every(line=>String(line.variant_id)===String(v?.id)))qtyInput.value=String(selectedCount);
+    if(checkout)checkout.disabled=busy||!nextCart.item_count;
+    syncHeader(Number(nextCart.item_count||0));
+    updateOffer();
+  }
+  async function fetchCart(){const r=await fetch(cartURL,{credentials:'same-origin',cache:'no-store',signal:controller.signal,headers:{Accept:'application/json'}});if(!r.ok)throw new Error('Shopify sepeti okunamadı.');return r.json();}
+  async function postCart(path,data){const r=await fetch(root+path,{method:'POST',credentials:'same-origin',signal:controller.signal,headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(data)});const body=await r.json().catch(()=>({}));if(!r.ok)throw new Error(body.description||body.message||'Shopify sepeti güncellenemedi.');return body;}
+  // Notify Horizon cart components after a successful custom AJAX cart mutation.
+  // Without this the custom summary updates while the native cart drawer stays stale.
+  async function notifyHorizonCart(nextCart, action, sections) {
+    try {
+      const { CartLinesUpdateEvent } = await import('@shopify/events');
+      const deferred = CartLinesUpdateEvent.createPromise();
+      section.dispatchEvent(new CartLinesUpdateEvent({
+        action: action || 'update',
+        context: 'product',
+        lines: (nextCart.items || []).map(item => ({
+          id: String(item.key),
+          merchandiseId: String(item.variant_id),
+          quantity: Number(item.quantity)
+        })),
+        promise: deferred.promise
+      }));
+      deferred.resolve({
+        cart: CartLinesUpdateEvent.createCartFromAjaxResponse(nextCart),
+        detail: {
+          sections: sections || undefined,
+          items: nextCart.items || [],
+          itemCount: Number(nextCart.item_count || 0),
+          productId: String(productId),
+          source: 'mvpd-product-information',
+          didError: false
+        }
+      });
+    } catch (error) {
+      console.warn('[MarketVitrini] Horizon cart notification failed:', error);
+    }
+  }
+  // React to Shopify drawer and native cart quantity changes in both directions.
+  // The native event's promise resolves when the mutation is complete.
+  listen(document,'shopify:cart:lines-update', event => {
+    if (event.target === section || !event.promise) return;
+    event.promise.then(() => {
+      if (!busy) refresh();
+      else needsRefresh=true;
+    }).catch(() => {});
+  });
+  async function refresh(){if(busy||controller.signal.aborted)return;const serial=++loadSerial;try{const fresh=await fetchCart();if(serial===loadSerial){renderCart(fresh);}}catch(e){if(serial===loadSerial&&!controller.signal.aborted){showError(e.message);if(cartCheck){cartCheck.hidden=false;cartCheck.textContent='Sepete ulaşılamıyor';}if(checkout)checkout.disabled=true;}}}
+  function busyUI(value) {
+    busy=value;
+    section.setAttribute('aria-busy',String(value));
+    if(variantSelect)variantSelect.disabled=value;
+    if(qtyInput)qtyInput.disabled=value;
+    if(add)add.disabled=value||!selectedVariant()?.available;
+    $$('[data-mvpd-minus],[data-mvpd-plus],[data-mv-remove-key]').forEach(button=>button.disabled=value);
+    packs.forEach(card=>{const button=card.querySelector('[data-mv-pack-select]');if(button)button.disabled=value;});
+    if(checkout)checkout.disabled=value||!cart?.item_count;
+    if(!value)showPreview();
+    const buy=$('[data-wy-buy-now]');if(buy)buy.disabled=value||!selectedVariant()?.available;
+  }
+  // This affects only the product on this page; other unrelated cart items remain intact.
+  async function setQuantity(value){
+    const v=selectedVariant();if(!v||busy)return;
+    let qty=Math.max(0,Math.floor(Number(value)||0));
+    if(qty>0&&!v.available){showError('Bu seçenek şu anda stokta yok.');return;}
+    if(qty>0&&(qty<v.min||(v.max&&qty>v.max)||(qty-v.min)%v.inc!==0)){showError('Seçilen adet bu ürünün miktar kurallarıyla uyumlu değil.');return;}
+    const serial=++mutationSerial;
+    loadSerial++;
+    busyUI(true);showError('');showStatus('');
+    if(qtyInput)qtyInput.value=String(qty);
+    if(cartCheck){cartCheck.hidden=false;cartCheck.textContent='Sepet güncelleniyor…';}
+    try{
+      const previous=await fetchCart();
+      const lines=previous.items.filter(item=>Number(item.product_id)===Number(productId) && !item.selling_plan_allocation && !item.parent_relationship && !Object.keys(item.properties||{}).length);
+      const same=lines.length===1&&Number(lines[0].variant_id)===Number(v.id);
+      let updated;
+      const ids=[...new Set([...document.querySelectorAll('cart-items-component[data-section-id]')].map(el=>el.dataset.sectionId).filter(Boolean))].slice(0,5);
+      const withSections={sections:ids,sections_url:window.location.pathname};
+      if(same){
+        updated=lines[0].quantity===qty ? previous : await postCart('cart/change.js',{id:lines[0].key,quantity:qty,...withSections});
+      }else{
+        if(qty>0) await postCart('cart/add.js',{items:[{id:v.id,quantity:qty}],...withSections});
+        if(lines.length){const updates={};lines.forEach(item=>updates[item.key]=0);updated=await postCart('cart/update.js',{updates,...withSections});}
+        else updated=await fetchCart();
+      }
+      // cart/change.js and cart/update.js return authoritative full cart JSON;
+      // cart/add.js returns only added items and needs one follow-up read.
+      const fullCart=Array.isArray(updated?.items)&&Number.isFinite(Number(updated?.total_price)) ? updated : await fetchCart();
+      if(serial!==mutationSerial)return;
+      renderCart(fullCart);
+      await notifyHorizonCart(fullCart,qty>0?'update':'remove',updated?.sections);
+      showError('');showStatus(qty>0?'Sepetiniz güncellendi.':'Ürün sepetten kaldırıldı.');
+      return true;
+    }catch(e){if(e.name!=='AbortError'){showError(e.message||'Sepet değiştirilemedi.');try{renderCart(await fetchCart());}catch{}}}
+    finally{busyUI(false);if(cart)renderCart(cart);if(cartCheck)cartCheck.hidden=true;if(needsRefresh){needsRefresh=false;refresh();}}
+  }
+  // Product gallery behavior is independent of package/cart selection.
+  function switchMedia(id){
+    if(!id)return;
+    const all=$$('[data-mvpd-media]');if(!all.some(el=>el.dataset.mvpdMedia===String(id)))return;
+    all.forEach(el=>{const active=el.dataset.mvpdMedia===String(id);el.hidden=!active;el.classList.toggle('is-active',active);if(!active)el.querySelectorAll('video').forEach(video=>video.pause());});
+    $$('[data-mvpd-thumb]').forEach(el=>{const active=el.dataset.mvpdThumb===String(id);el.classList.toggle('is-active',active);el.setAttribute('aria-pressed',String(active));});
+    const index=all.findIndex(el=>el.dataset.mvpdMedia===String(id));set('[data-mvpd-gallery-count]',(index+1)+' / '+all.length);
+  }
+  $$('[data-mvpd-thumb]').forEach(btn=>btn.addEventListener('click',()=>switchMedia(btn.dataset.mvpdThumb)));
+  function nextMedia(direction){const all=$$('[data-mvpd-media]');if(all.length<2)return;const index=all.findIndex(el=>!el.hidden);switchMedia(all[(index+direction+all.length)%all.length].dataset.mvpdMedia);}
+  $('[data-mvpd-prev]')?.addEventListener('click',()=>nextMedia(-1));
+  $('[data-mvpd-next]')?.addEventListener('click',()=>nextMedia(1));
+  $('.wy-thumbnails')?.addEventListener('keydown',event=>{
+    if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+    const thumbs=$$('[data-mvpd-thumb]');const index=thumbs.indexOf(event.target);if(index<0)return;
+    event.preventDefault();
+    const next=event.key==='Home'?0:event.key==='End'?thumbs.length-1:(index+(event.key==='ArrowRight'?1:-1)+thumbs.length)%thumbs.length;
+    thumbs[next].click();thumbs[next].focus();
+  });
+  const media=$$('[data-mvpd-media]');
+  set('[data-mvpd-gallery-count]','1 / '+Math.max(1,media.length));
+  $$('[data-mvpd-prev],[data-mvpd-next]').forEach(button=>button.disabled=media.length<2);
+
+  $('[data-mvpd-thumb-more]')?.addEventListener('click',()=>{const rail=$('.wy-thumbnails');if(rail){const vertical=window.matchMedia('(min-width:601px)').matches;rail.scrollBy({top:vertical?140:0,left:vertical?0:170,behavior:'smooth'});}});
+  variantSelect?.addEventListener('change',()=>{if(qtyInput)qtyInput.value=String(selectedVariant()?.min||1);showPreview();const v=selectedVariant();document.dispatchEvent(new CustomEvent('mv:variant-change',{detail:{productId,variant:{id:v.id,price:v.price,compare_at_price:v.compare,available:v.available}}}));switchMedia(v.mediaId);});
+  packs.forEach(card=>card.querySelector('[data-mv-pack-select]')?.addEventListener('click',()=>setQuantity(Number(card.dataset.qty))));
+  $('[data-mvpd-base-restore]')?.addEventListener('click',()=>setQuantity(selectedVariant()?.min||1));
+  function adjust(value){
+    const variant=selectedVariant();if(!variant||busy)return;
+    const raw=Number(value);const min=variant.min||1;const inc=variant.inc||1;
+    let next=Math.max(min,min+Math.round(((Number.isFinite(raw)?raw:min)-min)/inc)*inc);
+    if(variant.max)next=Math.min(next,min+Math.floor((variant.max-min)/inc)*inc);
+    qtyInput.value=String(next);
+    if(cartProductLines().length)setQuantity(next);
+    else updateOffer();
+  }
+  qtyInput?.addEventListener('change',()=>adjust(qtyInput.value));
+  $('[data-mvpd-minus]')?.addEventListener('click',()=>adjust(Number(qtyInput?.value)-(selectedVariant()?.inc||1)));
+  $('[data-mvpd-plus]')?.addEventListener('click',()=>adjust(Number(qtyInput?.value)+(selectedVariant()?.inc||1)));
+  form?.addEventListener('submit',async event=>{
+    event.preventDefault();if(busy)return;
+    set('[data-mvpd-add-label]',config.loadingLabel);
+    await setQuantity(Number(qtyInput?.value)||selectedVariant()?.min||1);
+    set('[data-mvpd-add-label]',selectedVariant()?.available?config.addLabel:config.soldLabel);
+  });
+  cartList?.addEventListener('click',async e=>{const remove=e.target.closest('[data-mv-remove-key]');if(!remove||busy)return;busyUI(true);try{await postCart('cart/change.js',{id:remove.dataset.mvRemoveKey,quantity:0});const next=await fetchCart();renderCart(next);await notifyHorizonCart(next,'remove');showError('');}catch(err){if(err.name!=='AbortError')showError(err.message);}finally{busyUI(false);}});
+  $('[data-mvpd-base-remove]')?.addEventListener('click',()=>setQuantity(0));
+  $('[data-mvpd-bundle-remove]')?.addEventListener('click',()=>setQuantity(0));
+  $('[data-mvpd-coupon-apply]')?.addEventListener('click',()=>{const input=$('[data-mvpd-coupon]');const msg=$('[data-mvpd-coupon-info]');if(msg)msg.hidden=!(input&&input.value.trim());});
+  $('[data-wy-buy-now]')?.addEventListener('click',async()=>{
+    if(busy||!selectedVariant()?.available)return;
+    const ok=await setQuantity(Number(qtyInput?.value)||selectedVariant().min||1);
+    if(!ok)return;
+    busyUI(true);
+    window.location.assign(section.dataset.next==='cart'?section.dataset.cartRedirect:section.dataset.checkoutRedirect);
+  });
+  function startCampaign(){
+    const panel=$('[data-wy-campaign]');if(!panel)return;
+    const deadline=Date.parse(panel.dataset.end);if(!Number.isFinite(deadline))return;
+    let timer;
+    function tick(){
+      const remaining=Math.max(0,deadline-Date.now());panel.hidden=false;
+      if(!remaining){visible('[data-wy-clock]',false);set('[data-wy-campaign-note]','Kampanya süresi doldu.');clearInterval(timer);return;}
+      set('[data-wy-hours]',String(Math.floor(remaining/3600000)).padStart(2,'0'));
+      set('[data-wy-minutes]',String(Math.floor(remaining/60000)%60).padStart(2,'0'));
+      set('[data-wy-seconds]',String(Math.floor(remaining/1000)%60).padStart(2,'0'));
+    }
+    if(deadline>Date.now())timer=setInterval(tick,1000);
+    tick();controller.signal.addEventListener('abort',()=>clearInterval(timer),{once:true});
+  }
+  startCampaign();
+  checkout?.addEventListener('click',async()=>{
+    if(busy)return;busyUI(true);if(checkoutLabel)checkoutLabel.textContent=checkoutLoading;
+    try{
+      const fresh=await fetchCart();renderCart(fresh);
+      if(!fresh.item_count)throw new Error('Sepet boş. Önce paket seçin.');
+      const coupon=$('[data-mvpd-coupon]')?.value.trim();
+      const route=section.dataset.next==='cart'?'cart':'checkout';
+      if(coupon)window.location.assign(root+'discount/'+encodeURIComponent(coupon)+'?redirect='+encodeURIComponent(root+route));
+      else window.location.assign(route==='cart'?section.dataset.cartRedirect:section.dataset.checkoutRedirect);
+    }catch(e){showError(e.message);busyUI(false);if(checkoutLabel)checkoutLabel.textContent=originalCheckoutLabel;}
+  });
+  function restore(event){if(event.persisted){busyUI(false);if(checkoutLabel)checkoutLabel.textContent=originalCheckoutLabel;}if(!busy)refresh();}
+  listen(window,'pageshow',restore);
+  listen(window,'focus',()=>{if(!busy)refresh();});
+  listen(document,'visibilitychange',()=>{if(!document.hidden&&!busy)refresh();});
+  showPreview();switchMedia(selectedVariant()?.mediaId);refresh();
+  return () => controller.abort();
+
+  }
+  function scan(scope){
+    const roots=[...scope.querySelectorAll('[data-wy-product]')];
+    if(scope.matches?.('[data-wy-product]'))roots.unshift(scope);
+    roots.forEach(section=>{if(!instances.has(section)){const cleanup=initialize(section);if(cleanup)instances.set(section,cleanup);}});
+  }
+  document.addEventListener('shopify:section:load',event=>scan(event.target));
+  document.addEventListener('shopify:section:unload',event=>{
+    for(const [section,cleanup] of instances){if(event.target===section||event.target.contains(section)){cleanup();instances.delete(section);}}
+  });
+  window.__WytaminProduct={scan};
+  scan(document);
+})();
+</script>
+{% schema %}
+{
+  "name": "Wytamin Ürün Sayfası",
+  "tag": "section",
+  "class": "wy-product-section",
+  "enabled_on": {
+    "templates": [
+      "product"
+    ]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Ürün alt başlığı",
+      "default": "Günlük rutininiz için gelişmiş kolajen formülü"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Kısa açıklama",
+      "default": "Ürününüzün içeriğini, kullanımını ve öne çıkan özelliklerini burada açıklayın."
+    },
+    {
+      "type": "text",
+      "id": "rating",
+      "label": "Yorum puanı",
+      "info": "Yorum uygulaması verisi yoksa yalnızca gerçek puanı yazın."
+    },
+    {
+      "type": "number",
+      "id": "review_count",
+      "label": "Yorum sayısı",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "verified_seller",
+      "label": "Doğrulanmış satıcı etiketi",
+      "info": "Yalnızca doğrulanmış durumunuz varsa açın.",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "verified_label",
+      "label": "Satıcı etiketi",
+      "default": "Doğrulanmış Satıcı"
+    },
+    {
+      "type": "text",
+      "id": "gallery_badge",
+      "label": "Görsel üstü kampanya etiketi"
+    },
+    {
+      "type": "image_picker",
+      "id": "gallery_stamp",
+      "label": "Görsel üstü rozet görseli"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Görsel yerleşimi",
+      "options": [
+        {
+          "value": "contain",
+          "label": "Tamamını göster"
+        },
+        {
+          "value": "cover",
+          "label": "Alanı doldur"
+        }
+      ],
+      "default": "contain"
+    },
+    {
+      "type": "text",
+      "id": "why_title",
+      "label": "Fayda kutusu başlığı",
+      "default": "Neden bu ürünü seçmelisiniz?"
+    },
+    {
+      "type": "textarea",
+      "id": "why_points",
+      "label": "Faydalar (her satıra bir madde)",
+      "default": "Ürün içeriği hakkında açık bilgi\nGünlük rutine uygun kullanım\nPratik hazırlama\nKullanım detaylarını inceleyin"
+    },
+    {
+      "type": "text",
+      "id": "pack_title",
+      "label": "Paketler başlığı",
+      "default": "Kampanyalı Paket Seçenekleri"
+    },
+    {
+      "type": "text",
+      "id": "pack_note",
+      "label": "Paketler üst notu",
+      "default": "Size uygun paketi seçin"
+    },
+    {
+      "type": "text",
+      "id": "featured_label",
+      "label": "Öne çıkan paket etiketi",
+      "default": "Öne çıkan paket"
+    },
+    {
+      "type": "text",
+      "id": "campaign_heading",
+      "label": "Kampanya başlığı",
+      "default": "Sınırlı Süreli Kampanya!"
+    },
+    {
+      "type": "text",
+      "id": "campaign_end",
+      "label": "Kampanya bitişi",
+      "info": "Saat dilimiyle girin: 2026-12-31T23:59:59+03:00. Boşsa sayaç gösterilmez."
+    },
+    {
+      "type": "range",
+      "id": "stock_reference",
+      "label": "Stok çubuğu referans adedi",
+      "min": 10,
+      "max": 200,
+      "step": 10,
+      "default": 40
+    },
+    {
+      "type": "text",
+      "id": "add_label",
+      "label": "Sepete ekle butonu",
+      "default": "Sepete Ekle"
+    },
+    {
+      "type": "text",
+      "id": "buy_label",
+      "label": "Hemen satın al butonu",
+      "default": "Hemen Satın Al"
+    },
+    {
+      "type": "text",
+      "id": "loading_label",
+      "label": "İşlem metni",
+      "default": "Sepete ekleniyor…"
+    },
+    {
+      "type": "select",
+      "id": "purchase_destination",
+      "label": "Hemen satın al sonrası",
+      "options": [
+        {
+          "value": "checkout",
+          "label": "Ödeme sayfası"
+        },
+        {
+          "value": "cart",
+          "label": "Sepet sayfası"
+        }
+      ],
+      "default": "checkout"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust",
+      "label": "Güven bilgilerini göster",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "shipping_title",
+      "label": "Kargo başlığı",
+      "default": "Kargo Bilgileri"
+    },
+    {
+      "type": "text",
+      "id": "shipping_note",
+      "label": "Kargo alt metni",
+      "default": "Ödeme adımında"
+    },
+    {
+      "type": "text",
+      "id": "dispatch_title",
+      "label": "Gönderim başlığı",
+      "default": "Gönderim Bilgileri"
+    },
+    {
+      "type": "text",
+      "id": "dispatch_note",
+      "label": "Gönderim alt metni",
+      "default": "Teslimat politikasını inceleyin"
+    },
+    {
+      "type": "text",
+      "id": "return_title",
+      "label": "İade başlığı",
+      "default": "İade Koşulları"
+    },
+    {
+      "type": "text",
+      "id": "return_note",
+      "label": "İade alt metni",
+      "default": "İade politikasını inceleyin"
+    },
+    {
+      "type": "text",
+      "id": "support_title",
+      "label": "Destek başlığı",
+      "default": "Müşteri Desteği"
+    },
+    {
+      "type": "text",
+      "id": "support_note",
+      "label": "Destek alt metni",
+      "default": "Sorularınız için yanınızdayız"
+    },
+    {
+      "type": "text",
+      "id": "authenticity_title",
+      "label": "Ürün bilgisi başlığı",
+      "default": "Ürün Bilgileri"
+    },
+    {
+      "type": "text",
+      "id": "authenticity_note",
+      "label": "Ürün bilgisi alt metni",
+      "default": "İçerik ve kullanım detayları"
+    },
+    {
+      "type": "text",
+      "id": "security_title",
+      "label": "Ödeme güveni başlığı",
+      "default": "Güvenle Alışveriş Yapın"
+    },
+    {
+      "type": "textarea",
+      "id": "security_note",
+      "label": "Ödeme güveni açıklaması",
+      "default": "Ödeme bilgileriniz Shopify ödeme altyapısında güvenle işlenir."
+    },
+    {
+      "type": "text",
+      "id": "reviews_heading",
+      "label": "Yorumlar başlığı",
+      "default": "Gerçek Kullanıcı Deneyimleri"
+    },
+    {
+      "type": "url",
+      "id": "reviews_link",
+      "label": "Tüm yorumlar bağlantısı"
+    },
+    {
+      "type": "color",
+      "id": "blue",
+      "label": "Mavi vurgu",
+      "default": "#0055ED"
+    },
+    {
+      "type": "color",
+      "id": "red",
+      "label": "Kırmızı vurgu",
+      "default": "#E60028"
+    },
+    {
+      "type": "color",
+      "id": "navy",
+      "label": "Lacivert metin",
+      "default": "#111E48"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Sayfa genişliği",
+      "min": 1200,
+      "max": 1800,
+      "step": 20,
+      "unit": "px",
+      "default": 1680
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Ürün faydası",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "İkon",
+          "options": [
+            {
+              "value": "skin",
+              "label": "Skin"
+            },
+            {
+              "value": "drop",
+              "label": "Drop"
+            },
+            {
+              "value": "bone",
+              "label": "Bone"
+            },
+            {
+              "value": "shield",
+              "label": "Shield"
+            },
+            {
+              "value": "peptide",
+              "label": "Peptide"
+            },
+            {
+              "value": "sun",
+              "label": "Sun"
+            },
+            {
+              "value": "leaf",
+              "label": "Leaf"
+            },
+            {
+              "value": "heart",
+              "label": "Heart"
+            }
+          ],
+          "default": "shield"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Başlık",
+          "default": "Ürün özelliği"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Alt metin",
+          "default": "Detayları inceleyin"
+        }
+      ]
+    },
+    {
+      "type": "ingredient",
+      "name": "İçerik kartı",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "İkon",
+          "options": [
+            {
+              "value": "skin",
+              "label": "Skin"
+            },
+            {
+              "value": "drop",
+              "label": "Drop"
+            },
+            {
+              "value": "bone",
+              "label": "Bone"
+            },
+            {
+              "value": "shield",
+              "label": "Shield"
+            },
+            {
+              "value": "peptide",
+              "label": "Peptide"
+            },
+            {
+              "value": "sun",
+              "label": "Sun"
+            },
+            {
+              "value": "leaf",
+              "label": "Leaf"
+            },
+            {
+              "value": "heart",
+              "label": "Heart"
+            }
+          ],
+          "default": "drop"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Başlık",
+          "default": "İçerik"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Alt metin",
+          "default": "Ürün içeriği"
+        },
+        {
+          "type": "select",
+          "id": "tone",
+          "label": "İkon rengi",
+          "options": [
+            {
+              "value": "blue",
+              "label": "Blue"
+            },
+            {
+              "value": "red",
+              "label": "Red"
+            },
+            {
+              "value": "orange",
+              "label": "Orange"
+            },
+            {
+              "value": "green",
+              "label": "Green"
+            }
+          ],
+          "default": "blue"
+        }
+      ]
+    },
+    {
+      "type": "pack",
+      "name": "Paket kartı",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "range",
+          "id": "qty",
+          "label": "Adet",
+          "min": 1,
+          "max": 10,
+          "step": 1,
+          "default": 1
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Başlık",
+          "default": "1 Kutu"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Açıklama"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Paket görseli"
+        },
+        {
+          "type": "checkbox",
+          "id": "featured",
+          "label": "Öne çıkar",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "review",
+      "name": "Müşteri yorumu",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Müşteri fotoğrafı"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Müşteri adı"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Gerçek yorum metni"
+        },
+        {
+          "type": "range",
+          "id": "stars",
+          "label": "Puan",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "text",
+          "id": "date",
+          "label": "Yorum tarihi"
+        }
+      ]
+    },
+    {
+      "type": "@app"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Wytamin Ürün Sayfası",
+      "blocks": [
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "skin",
+            "title": "Cilt Elastikiyeti",
+            "text": "Ürün faydası"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "drop",
+            "title": "Saç ve Tırnak",
+            "text": "Ürün faydası"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "bone",
+            "title": "Eklem ve Kemik",
+            "text": "Ürün faydası"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "shield",
+            "title": "Günlük Destek",
+            "text": "İçerikleri inceleyin"
+          }
+        },
+        {
+          "type": "ingredient",
+          "settings": {
+            "icon": "peptide",
+            "title": "Tip 1, 2, 3",
+            "text": "Kolajen Peptitleri",
+            "tone": "red"
+          }
+        },
+        {
+          "type": "ingredient",
+          "settings": {
+            "icon": "drop",
+            "title": "Hyaluronik",
+            "text": "Asit",
+            "tone": "blue"
+          }
+        },
+        {
+          "type": "ingredient",
+          "settings": {
+            "icon": "sun",
+            "title": "C, D3, K2",
+            "text": "Vitaminleri",
+            "tone": "orange"
+          }
+        },
+        {
+          "type": "ingredient",
+          "settings": {
+            "icon": "leaf",
+            "title": "Çinko",
+            "text": "İçerik bilgileri",
+            "tone": "green"
+          }
+        },
+        {
+          "type": "pack",
+          "settings": {
+            "qty": 1,
+            "title": "1 Kutu",
+            "text": "",
+            "featured": false
+          }
+        },
+        {
+          "type": "pack",
+          "settings": {
+            "qty": 2,
+            "title": "2 Kutu",
+            "text": "",
+            "featured": true
+          }
+        },
+        {
+          "type": "pack",
+          "settings": {
+            "qty": 3,
+            "title": "3 Kutu",
+            "text": "",
+            "featured": false
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
