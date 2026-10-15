@@ -339,7 +339,7 @@
       {% if mvu_show %}
         <section class="mvu-guide" {% if mvu_heading != blank %}aria-labelledby="mvu-heading-{{ section.id }}"{% else %}aria-label="Kullanım rehberi"{% endif %}
           {{ mvu_block.shopify_attributes }}
-          style="--mvu-bg:{{ mvu_block.settings.background | default: '#eff6ff' }};--mvu-border:{{ mvu_block.settings.border_color | default: '#dce8f8' }};--mvu-title:{{ mvu_block.settings.heading_color | default: '#10244c' }};--mvu-text:{{ mvu_block.settings.text_color | default: '#53627c' }};--mvu-accent:{{ mvu_block.settings.accent_color | default: '#0965e8' }};--mvu-radius:{{ mvu_block.settings.radius | default: 16 }}px;">
+          style="--mvu-bg:{{ mvu_block.settings.background | default: '#f6f8fc' }};--mvu-border:{{ mvu_block.settings.border_color | default: '#e4e9f2' }};--mvu-title:{{ mvu_block.settings.heading_color | default: '#10244c' }};--mvu-text:{{ mvu_block.settings.text_color | default: '#53627c' }};--mvu-accent:{{ mvu_block.settings.accent_color | default: '#245bc1' }};--mvu-radius:{{ mvu_block.settings.radius | default: 12 }}px;">
           <div class="mvu-inner{% unless mvu_show_image %} mvu-inner--no-image{% endunless %}">
             {% if mvu_show_image %}
               <div class="mvu-media" style="--mvu-image-fit:{{ mvu_block.settings.image_fit | default: 'contain' }};">
@@ -384,7 +384,7 @@
                       assign step_icon = mvu_block.settings[icon_key]
                     endif
                   %}
-                  <li class="mvu-step" style="--mvu-icon:{{ mvu_block.settings[color_key] | default: '#0965e8' }};--mvu-icon-bg:{{ mvu_block.settings[background_key] | default: '#ffffff' }};">
+                  <li class="mvu-step" style="--mvu-icon:{{ mvu_block.settings[color_key] | default: '#245bc1' }};--mvu-icon-bg:{{ mvu_block.settings[background_key] | default: '#ffffff' }};">
                     <span class="mvu-icon" aria-hidden="true">
                       {% if mvu_block.settings[image_key] != blank %}
                         {{ mvu_block.settings[image_key] | image_url: width: 120 | image_tag: loading: 'lazy', width: 32, height: 32, alt: '' }}
@@ -2804,28 +2804,28 @@
 </style>
 
 <style>
-#mvpd-{{ section.id }} .mvu-guide{container-type:inline-size;container-name:mvusage;box-sizing:border-box;min-width:0;width:100%;margin:12px 0 0;background:var(--mvu-bg);border:1px solid var(--mvu-border);border-radius:var(--mvu-radius);overflow:hidden;color:var(--mvu-text);text-align:left}
+#mvpd-{{ section.id }} .mvu-guide{container-type:inline-size;container-name:mvusage;box-sizing:border-box;min-width:0;width:100%;margin:10px 0 0;background:var(--mvu-bg);border:1px solid var(--mvu-border);border-radius:var(--mvu-radius);box-shadow:0 3px 14px rgb(16 36 76 / 3%);overflow:hidden;color:var(--mvu-text);text-align:left}
 #mvpd-{{ section.id }} .mvu-guide *{box-sizing:border-box}
-#mvpd-{{ section.id }} .mvu-inner{display:grid;grid-template-columns:24% minmax(0,1fr);min-height:190px}
+#mvpd-{{ section.id }} .mvu-inner{display:grid;grid-template-columns:108px minmax(0,1fr);min-height:0}
 #mvpd-{{ section.id }} .mvu-inner--no-image{grid-template-columns:minmax(0,1fr)}
-#mvpd-{{ section.id }} .mvu-media{min-width:0;position:relative;display:flex;align-items:center;justify-content:center;background:var(--mvu-icon-bg, #fff)}
-#mvpd-{{ section.id }} .mvu-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:var(--mvu-image-fit);display:block}
-#mvpd-{{ section.id }} .mvu-placeholder{width:100%;height:180px;display:block}
-#mvpd-{{ section.id }} .mvu-content{padding:19px 21px;min-width:0}
-#mvpd-{{ section.id }} .mvu-eyebrow{margin:0 0 6px;color:var(--mvu-accent);font-size:10px;line-height:1.4;font-weight:750;letter-spacing:1.3px}
-#mvpd-{{ section.id }} .mvu-heading{margin:0 0 17px;padding:0;color:var(--mvu-title);font-family:inherit;font-size:clamp(17px,2.5cqi,24px);font-weight:750;line-height:1.25;letter-spacing:-.4px;text-transform:none}
-#mvpd-{{ section.id }} .mvu-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;list-style:none;margin:0;padding:0}
-#mvpd-{{ section.id }} .mvu-step{min-width:0;display:flex;gap:10px;align-items:flex-start;list-style:none;margin:0;padding:0}
-#mvpd-{{ section.id }} .mvu-icon{position:relative;flex:0 0 42px;width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--mvu-icon-bg);color:var(--mvu-icon)}
-#mvpd-{{ section.id }} .mvu-icon>svg,#mvpd-{{ section.id }} .mvu-icon>img{width:27px;height:27px;display:block;object-fit:contain}
-#mvpd-{{ section.id }} .mvu-symbol{font-size:25px;line-height:1}
+#mvpd-{{ section.id }} .mvu-media{min-width:0;position:relative;display:flex;align-items:center;justify-content:center;background:transparent;border-right:1px solid var(--mvu-border)}
+#mvpd-{{ section.id }} .mvu-photo{position:absolute;inset:10px;width:calc(100% - 20px);height:calc(100% - 20px);object-fit:var(--mvu-image-fit);display:block}
+#mvpd-{{ section.id }} .mvu-placeholder{width:100%;height:110px;display:block}
+#mvpd-{{ section.id }} .mvu-content{padding:12px 16px;min-width:0}
+#mvpd-{{ section.id }} .mvu-eyebrow{margin:0 0 3px;color:var(--mvu-accent);font-size:9px;line-height:1.4;font-weight:700;letter-spacing:1.5px}
+#mvpd-{{ section.id }} .mvu-heading{margin:0 0 11px;padding:0;color:var(--mvu-title);font-family:inherit;font-size:clamp(16px,2cqi,19px);font-weight:750;line-height:1.25;letter-spacing:-.4px;text-transform:none}
+#mvpd-{{ section.id }} .mvu-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;list-style:none;margin:0;padding:0}
+#mvpd-{{ section.id }} .mvu-step{min-width:0;display:flex;gap:9px;align-items:flex-start;list-style:none;margin:0;padding:0}
+#mvpd-{{ section.id }} .mvu-icon{position:relative;flex:0 0 34px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:11px;background:var(--mvu-icon-bg);color:var(--mvu-icon)}
+#mvpd-{{ section.id }} .mvu-icon>svg,#mvpd-{{ section.id }} .mvu-icon>img{width:22px;height:22px;display:block;object-fit:contain}
+#mvpd-{{ section.id }} .mvu-symbol{font-size:22px;line-height:1}
 #mvpd-{{ section.id }} .mvu-number{position:absolute;bottom:-4px;right:-3px;border:2px solid var(--mvu-bg);border-radius:20px;padding:1px 4px;font-size:8px;font-weight:800;line-height:1.4;color:var(--mvu-icon-bg);background:var(--mvu-icon)}
 #mvpd-{{ section.id }} .mvu-step-copy{min-width:0}
-#mvpd-{{ section.id }} .mvu-step-title{font-family:inherit;margin:0 0 5px;padding:0;font-size:13px;font-weight:750;line-height:1.35;letter-spacing:0;text-transform:none;color:var(--mvu-title);overflow-wrap:anywhere}
-#mvpd-{{ section.id }} .mvu-step-text{margin:0;font-size:11px;line-height:1.6;color:var(--mvu-text);overflow-wrap:anywhere}
-#mvpd-{{ section.id }} .mvu-note{margin:16px 0 0;padding:10px 0 0;border-top:1px solid var(--mvu-border);font-size:10px;line-height:1.5;color:var(--mvu-text)}
-@container mvusage (max-width:850px){#mvpd-{{ section.id }} .mvu-step{flex-direction:column;gap:9px}#mvpd-{{ section.id }} .mvu-content{padding:17px}#mvpd-{{ section.id }} .mvu-steps{gap:14px}}
-@container mvusage (max-width:480px){#mvpd-{{ section.id }} .mvu-inner{grid-template-columns:minmax(0,1fr)}#mvpd-{{ section.id }} .mvu-media{min-height:150px}#mvpd-{{ section.id }} .mvu-photo{object-fit:contain}#mvpd-{{ section.id }} .mvu-steps{grid-template-columns:minmax(0,1fr);gap:16px}#mvpd-{{ section.id }} .mvu-step{flex-direction:row;gap:14px}#mvpd-{{ section.id }} .mvu-step-title{font-size:15px}#mvpd-{{ section.id }} .mvu-step-text{font-size:13px}#mvpd-{{ section.id }} .mvu-heading{font-size:21px}#mvpd-{{ section.id }} .mvu-note{font-size:11px}}
+#mvpd-{{ section.id }} .mvu-step-title{font-family:inherit;margin:0 0 3px;padding:0;font-size:12px;font-weight:700;line-height:1.35;letter-spacing:0;text-transform:none;color:var(--mvu-title);overflow-wrap:anywhere}
+#mvpd-{{ section.id }} .mvu-step-text{margin:0;font-size:11px;line-height:1.45;color:var(--mvu-text);overflow-wrap:anywhere}
+#mvpd-{{ section.id }} .mvu-note{margin:10px 0 0;padding:7px 0 0;border-top:1px solid var(--mvu-border);font-size:9px;line-height:1.45;color:var(--mvu-text)}
+@container mvusage (max-width:620px){#mvpd-{{ section.id }} .mvu-inner{grid-template-columns:80px minmax(0,1fr)}#mvpd-{{ section.id }} .mvu-inner--no-image{grid-template-columns:minmax(0,1fr)}#mvpd-{{ section.id }} .mvu-content{padding:12px}#mvpd-{{ section.id }} .mvu-steps{gap:10px}#mvpd-{{ section.id }} .mvu-step{flex-direction:column;gap:7px}#mvpd-{{ section.id }} .mvu-step-title{font-size:12px}}
+@container mvusage (max-width:480px){#mvpd-{{ section.id }} .mvu-inner{grid-template-columns:70px minmax(0,1fr)}#mvpd-{{ section.id }} .mvu-inner--no-image{grid-template-columns:minmax(0,1fr)}#mvpd-{{ section.id }} .mvu-photo{inset:8px;width:calc(100% - 16px);height:calc(100% - 16px)}#mvpd-{{ section.id }} .mvu-steps{grid-template-columns:minmax(0,1fr);gap:12px}#mvpd-{{ section.id }} .mvu-step{flex-direction:row;gap:10px}#mvpd-{{ section.id }} .mvu-step-text{font-size:12px}#mvpd-{{ section.id }} .mvu-heading{font-size:17px}#mvpd-{{ section.id }} .mvu-note{font-size:10px}}
 </style>
 
 {% schema %}
@@ -3780,13 +3780,13 @@
           "type": "color",
           "id": "background",
           "label": "Alan rengi",
-          "default": "#eff6ff"
+          "default": "#f6f8fc"
         },
         {
           "type": "color",
           "id": "border_color",
           "label": "Çerçeve ve ayırıcı",
-          "default": "#dce8f8"
+          "default": "#e4e9f2"
         },
         {
           "type": "color",
@@ -3804,7 +3804,7 @@
           "type": "color",
           "id": "accent_color",
           "label": "Üst küçük başlık rengi",
-          "default": "#0965e8"
+          "default": "#245bc1"
         },
         {
           "type": "range",
@@ -3814,7 +3814,7 @@
           "max": 32,
           "step": 1,
           "unit": "px",
-          "default": 16
+          "default": 12
         },
         {
           "type": "header",
@@ -3892,7 +3892,7 @@
           "type": "color",
           "id": "step_1_color",
           "label": "İkon ve numara rengi",
-          "default": "#0965e8"
+          "default": "#245bc1"
         },
         {
           "type": "color",
@@ -3976,7 +3976,7 @@
           "type": "color",
           "id": "step_2_color",
           "label": "İkon ve numara rengi",
-          "default": "#0965e8"
+          "default": "#245bc1"
         },
         {
           "type": "color",
@@ -4060,7 +4060,7 @@
           "type": "color",
           "id": "step_3_color",
           "label": "İkon ve numara rengi",
-          "default": "#0965e8"
+          "default": "#245bc1"
         },
         {
           "type": "color",
