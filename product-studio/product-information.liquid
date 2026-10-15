@@ -1,0 +1,2731 @@
+{% comment %}
+  MarketVitrini PRO — Tek Shopify ürünü / 1-2-3 adet / gerçek sepet senkronu
+  Standalone Shopify OS 2.0 product-template section.
+  Real product variants, real compare-at prices, optional upsell, AJAX cart and checkout.
+  Self-contained product-information section with a consolidated Studio design.
+  REFERANS EKRAN METINLERI V7 (gorseldeki ornek):
+  Eski fiyat: 1.499 TL | Yeni fiyat: 899 TL | %40 INDIRIM | 600 TL Kazancin var!
+  Bu tutarlar Shopify'daki gercek fiyatlar ile karismamasi icin sabit yazilmaz,
+  secili varyantin price ve compare_at_price alanlarindan hesaplanir.
+{% endcomment %}
+{% liquid
+  assign mv_p = product
+  if mv_p == blank
+    assign mv_p = closest.product
+  endif
+  assign mv_v = blank
+  if mv_p != blank
+    assign mv_v = mv_p.selected_or_first_available_variant
+  endif
+  assign mv_sale = false
+  if mv_v != blank and mv_v.compare_at_price > mv_v.price
+    assign mv_sale = true
+    assign mv_diff = mv_v.compare_at_price | minus: mv_v.price
+  endif
+  assign mv_origin = mv_v.price
+  if mv_sale
+    assign mv_origin = mv_v.compare_at_price
+  endif
+  assign mv_min = mv_v.quantity_rule.min | default: 1
+  assign mv_inc = mv_v.quantity_rule.increment | default: 1
+  assign mv_max = mv_v.quantity_rule.max
+  assign mv_form_id = 'mvpd-form-' | append: section.id
+  assign mv_gallery_manual = false
+  if section.settings.use_manual_gallery and section.settings.gallery_image_1 != blank
+    assign mv_gallery_manual = true
+  endif
+%}
+<section id="mvpd-{{ section.id }}" class="mvpd" data-mvpd data-mv-section
+  data-cart-url="{{ routes.cart_add_url }}.js"
+  data-cart-redirect="{{ routes.cart_url }}"
+  data-checkout-redirect="{{ routes.root_url }}checkout"
+  data-root-url="{{ routes.root_url }}"
+  data-next="{{ section.settings.purchase_destination }}"
+  style="--mvpd-accent:{{ section.settings.accent }};--mvpd-accent-dark:{{ section.settings.accent_dark }};--mvpd-head:{{ section.settings.heading_color }};--mvpd-muted:{{ section.settings.muted_color }};--mvpd-surface:{{ section.settings.card_color }};--mvpd-soft:{{ section.settings.soft_color }};--mvpd-border:{{ section.settings.border_color }};--mvpd-width:{{ section.settings.max_width }}px;--mvpd-radius:{{ section.settings.card_radius }}px;--mvpd-price:{{ section.settings.price_color }};--mvpd-gallery-badge:{{ section.settings.gallery_badge_color }};--mvpd-gallery-badge-text:{{ section.settings.gallery_badge_text_color }};--mvpd-feature-text:{{ section.settings.feature_text_color }};--mvpd-review-text:{{ section.settings.review_text_color }};--mvpd-social-bg:{{ section.settings.social_bg_color }};--mvpd-social-text:{{ section.settings.social_text_color }};--mvpd-price-badge-bg:{{ section.settings.price_badge_color }};--mvpd-price-badge-text:{{ section.settings.price_badge_text_color }};--mvpd-stock-bg:{{ section.settings.stock_panel_color }};--mvpd-stock-text:{{ section.settings.stock_text_color }};--mvpd-stock-bar-bg:{{ section.settings.stock_bar_track_color }};--mvpd-stock-bar:{{ section.settings.stock_bar_color }};--mvpd-summary-bg:{{ section.settings.summary_bg_color }};--mvpd-total-bg:{{ section.settings.total_panel_bg }};--mvpd-trust-icon:{{ section.settings.trust_icon_color }};--mvpd-trust-icon-bg:{{ section.settings.trust_icon_bg }};--mvpd-satisfaction-bg:{{ section.settings.satisfaction_panel_bg }};--mvpd-satisfaction-text:{{ section.settings.satisfaction_text_color }};--mvpd-upsell-bg:{{ section.settings.upsell_panel_bg }};--mvpd-upsell-btn:{{ section.settings.upsell_btn_color }};--mvpd-upsell-btn-text:{{ section.settings.upsell_btn_text_color }};--mvpd-upsell-badge:{{ section.settings.upsell_badge_color }};--mvpd-payment-bg:{{ section.settings.payment_bg_color }};">
+{% if mv_p == blank %}
+  <div class="mvpd__empty">Bu bölüm ürün şablonunda kullanılmalıdır. Lütfen bir ürün sayfasında önizleyin.</div>
+{% else %}
+  <div class="mvpd__topline">
+    <nav class="mvpd__breadcrumb" aria-label="İçerik yolu"><a href="{{ routes.root_url }}">Ana sayfa</a><span aria-hidden="true">/</span><span>{{ mv_p.title | escape }}</span></nav>
+    {% if section.settings.studio_kicker != blank %}<span class="mvpd__edition"><span aria-hidden="true"></span>{{ section.settings.studio_kicker | escape }}</span>{% endif %}
+  </div>
+  <div class="mvpd__layout">
+    <div class="mvpd__main">
+      <div class="mvpd__gallery" aria-label="Ürün görselleri">
+        <div class="mvpd__viewer">
+          {% if section.settings.show_media_slogan and section.settings.media_slogan != blank %}<span class="mvpd__media-slogan">{{ section.settings.media_slogan | escape }}</span>{% endif %}
+          {% if section.settings.show_gallery_badge and section.settings.gallery_badge_text != blank %}<span class="mvpd__sale-flag" data-mvpd-flag>{{ section.settings.gallery_badge_text | escape }}</span>{% endif %}
+          {% if mv_gallery_manual %}
+            {% for index in (1..6) %}
+              {% assign key = 'gallery_image_' | append: index %}
+              {% assign gallery_image = section.settings[key] %}
+              {% if gallery_image != blank %}
+                <div class="mvpd__media-item{% if forloop.first %} is-active{% endif %}" data-mvpd-media="manual-{{ index }}" {% unless forloop.first %}hidden{% endunless %}>
+                {% assign image_loading = 'lazy' %}{% assign image_priority = 'auto' %}{% if forloop.first %}{% assign image_loading = 'eager' %}{% assign image_priority = 'high' %}{% endif %}
+                {{ gallery_image | image_url: width: 1500 | image_tag: loading: image_loading, fetchpriority: image_priority, widths: '400,600,900,1200,1500', sizes: '(max-width: 749px) calc(100vw - 40px), (max-width: 1099px) 48vw, 32vw', class: 'mvpd__big-image', alt: gallery_image.alt }}
+                </div>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+          {% for media in mv_p.media limit: 12 %}
+            <div class="mvpd__media-item{% if forloop.first %} is-active{% endif %}" data-mvpd-media="{{ media.id }}" {% unless forloop.first %}hidden{% endunless %}>
+              {% case media.media_type %}
+                {% when 'image' %}
+                  {% assign image_loading = 'lazy' %}{% assign image_priority = 'auto' %}{% if forloop.first %}{% assign image_loading = 'eager' %}{% assign image_priority = 'high' %}{% endif %}
+                  {{ media | image_url: width: 1500 | image_tag: loading: image_loading, fetchpriority: image_priority, widths: '400,600,900,1200,1500', sizes: '(max-width: 749px) calc(100vw - 40px), (max-width: 1099px) 48vw, 32vw', class: 'mvpd__big-image', alt: media.alt }}
+                {% when 'video' %}
+                  {{ media | video_tag: controls: true, image_size: '1100x', class: 'mvpd__big-video' }}
+                {% when 'external_video' %}
+                  {{ media | external_video_tag: class: 'mvpd__big-video' }}
+                {% else %}
+                  {% if media.preview_image != blank %}{{ media.preview_image | image_url: width: 1200 | image_tag: loading: 'lazy', class: 'mvpd__big-image', alt: media.alt }}{% endif %}
+              {% endcase %}
+            </div>
+          {% else %}
+            <div class="mvpd__media-item is-active">{{ 'product-1' | placeholder_svg_tag: 'mvpd__big-image mvpd__placeholder' }}</div>
+          {% endfor %}
+          {% endif %}
+        </div>
+        {% if mv_gallery_manual %}
+          <div class="mvpd__thumbs" role="group" aria-label="Manuel ürün görseli seçimi">
+            {% for index in (1..6) %}
+              {% assign key = 'gallery_image_' | append: index %}
+              {% assign gallery_image = section.settings[key] %}
+              {% if gallery_image != blank %}
+                <button class="mvpd__thumb{% if forloop.first %} is-active{% endif %}" type="button" data-mvpd-thumb="manual-{{ index }}" aria-label="{{ index }}. görsel" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">
+                  {{ gallery_image | image_url: width: 180 | image_tag: loading: 'lazy', class: 'mvpd__thumb-img', alt: gallery_image.alt }}
+                </button>
+              {% endif %}
+            {% endfor %}
+          </div>
+          <button class="mvpd__thumb-more" type="button" data-mvpd-thumb-more aria-label="Diğer ürün görselleri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button>
+        {% elsif mv_p.media.size > 1 %}
+          <div class="mvpd__thumbs" role="group" aria-label="Ürün görseli seçimi">
+            {% for media in mv_p.media limit: 12 %}
+              <button class="mvpd__thumb{% if forloop.first %} is-active{% endif %}" type="button" data-mvpd-thumb="{{ media.id }}" aria-label="{{ forloop.index }}. görsel" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">
+                {% if media.preview_image != blank %}{{ media.preview_image | image_url: width: 180 | image_tag: loading: 'lazy', widths: '90,180', class: 'mvpd__thumb-img', alt: media.alt }}{% endif %}
+                {% if media.media_type != 'image' %}<span class="mvpd__play" aria-hidden="true">▶</span>{% endif %}
+              </button>
+            {% endfor %}
+          </div>
+          <button class="mvpd__thumb-more" type="button" data-mvpd-thumb-more aria-label="Diğer ürün görsellerini göster"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+        {% endif %}
+        <div class="mvpd__gallery-footer">
+          <span>{{ section.settings.studio_gallery_caption | escape }}</span>
+          <div class="mvpd__gallery-navigation"><button type="button" data-mvpd-prev aria-label="Önceki görsel">←</button><span data-mvpd-gallery-count aria-live="polite">1 / {% if mv_gallery_manual %}6{% else %}{{ mv_p.media.size | at_least: 1 }}{% endif %}</span><button type="button" data-mvpd-next aria-label="Sonraki görsel">→</button></div>
+        </div>
+      </div>
+
+      <div class="mvpd__details">
+        {% if section.settings.show_vendor and section.settings.reference_vendor != blank %}
+          <div class="mvpd__vendor">{{ section.settings.reference_vendor | escape }}</div>
+        {% endif %}
+        <h1 class="mvpd__title">{{ mv_p.title | escape }}</h1>
+        {% if section.settings.show_subtitle and section.settings.subtitle != blank %}
+          <p class="mvpd__subtitle">{{ section.settings.subtitle | escape }}</p>
+        {% endif %}
+        {% if section.settings.social_proof_text != blank or section.settings.mv_show_rating_bar and section.settings.verified_rating != blank and section.settings.verified_reviews_count != blank %}
+          <div class="mvpd__review mvpd__review--reference" aria-label="Değerlendirmeler ve bilgiler">
+            {% if section.settings.mv_show_rating_bar and section.settings.verified_rating != blank and section.settings.verified_reviews_count != blank %}
+              <span class="mvpd__review-stars" aria-hidden="true">{{ section.settings.manual_stars | escape }}</span>
+              <strong class="mvpd__rating-value">{{ section.settings.verified_rating | escape }}</strong>
+              <small class="mvpd__rating-count">({{ section.settings.verified_reviews_count | escape }} {{ section.settings.review_count_label | escape }})</small>
+            {% endif %}
+            {% if section.settings.social_proof_text != blank %}
+              <span class="mvpd__social-proof"><span class="mvpd__social-symbol" aria-hidden="true">{{ section.settings.social_proof_icon | escape }}</span> {{ section.settings.social_proof_text | escape }}</span>
+            {% endif %}
+          </div>
+        {% endif %}
+        {% form 'product', mv_p, id: mv_form_id, class: 'mvpd__form' %}
+            <div class="mvpd__price-area">
+              {% if mv_sale and section.settings.show_compare_price %}<s data-mvpd-old>{{ mv_v.compare_at_price | money_without_trailing_zeros }}</s>{% else %}<s data-mvpd-old hidden></s>{% endif %}
+              <div class="mvpd__price-line">
+                <strong data-mvpd-unit>{{ mv_v.price | money_without_trailing_zeros }}</strong>
+                {% if section.settings.show_price_badge and section.settings.price_badge_text != blank %}<span class="mvpd__pct" data-mvpd-pct>{{ section.settings.price_badge_text | escape }}</span>{% endif %}
+                {% if section.settings.show_savings_box %}<span class="mvpd__save" data-mvpd-save><b data-mvpd-save-amount>{% if section.settings.savings_value != blank %}{{ section.settings.savings_value | escape }}{% elsif mv_sale %}{{ mv_diff | money_without_trailing_zeros }}{% endif %}</b><small>{{ section.settings.savings_label | escape }}</small></span>{% endif %}
+              </div>
+            </div>
+        {% if section.settings.show_features %}
+          <ul class="mvpd__features mvpd__features--reference" aria-label="Öne çıkan özellikler">
+            {% for n in (1..6) %}
+              {% assign feature_key = 'feature_' | append: n %}
+              {% assign feature_text = section.settings[feature_key] %}
+              {% if feature_text != blank %}
+                <li><span class="mvpd__feature-check" aria-hidden="true">{{ section.settings.feature_icon | escape }}</span><span>{{ feature_text | escape }}</span></li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+          {% unless mv_p.has_only_default_variant %}
+            <label class="mvpd__field-label" for="mvpd-variant-{{ section.id }}">{{ section.settings.variant_label | escape }}</label>
+            <select class="mvpd__variant" id="mvpd-variant-{{ section.id }}" data-mvpd-variant name="id">
+              {% for variant in mv_p.variants %}
+                <option value="{{ variant.id }}" data-price="{{ variant.price }}" data-compare="{{ variant.compare_at_price | default: 0 }}" data-available="{{ variant.available }}" data-media-id="{{ variant.featured_media.id }}" data-inventory="{{ variant.inventory_quantity }}" data-inventory-management="{{ variant.inventory_management }}" data-inventory-policy="{{ variant.inventory_policy }}" data-min="{{ variant.quantity_rule.min | default: 1 }}" data-inc="{{ variant.quantity_rule.increment | default: 1 }}" data-max="{{ variant.quantity_rule.max }}" {% if variant.id == mv_v.id %}selected{% endif %} {% unless variant.available %}disabled{% endunless %}>
+                  {{ variant.title | escape }}{% unless variant.available %}  — {{ section.settings.variant_sold_out_label | escape }}{% endunless %}
+                </option>
+              {% endfor %}
+            </select>
+          {% endunless %}
+          <input type="hidden" name="id" value="{{ mv_v.id }}" data-mvpd-id{% unless mv_p.has_only_default_variant %} disabled{% endunless %}>
+          <div class="mvpd__purchase-row">
+            <div class="mvpd__quantity-area">
+              <label class="mvpd__field-label" for="mvpd-qty-{{ section.id }}">{{ section.settings.quantity_label | escape }}</label>
+              <div class="mvpd__qty">
+                <button type="button" data-mvpd-minus aria-label="Adet azalt">−</button>
+                <input id="mvpd-qty-{{ section.id }}" type="number" name="quantity" value="{{ mv_min }}" min="{{ mv_min }}" step="{{ mv_inc }}" {% if mv_max != blank %}max="{{ mv_max }}"{% endif %} data-mvpd-qty aria-label="Ürün adedi">
+                <button type="button" data-mvpd-plus aria-label="Adet artır">+</button>
+              </div>
+            </div>
+          </div>
+          <div class="mvpd__main-action">
+            <button type="submit" class="mvpd__add" data-mvpd-add{% unless mv_v.available %} disabled{% endunless %}><span data-mvpd-add-label>{% if mv_v.available %}{{ section.settings.studio_add_label | escape }}{% else %}{{ section.settings.variant_sold_out_label | escape }}{% endif %}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></button>
+            <span class="mvpd__action-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>{{ section.settings.studio_secure_note | escape }}</span>
+          </div>
+          {% if section.settings.show_stock_panel and section.settings.reference_stock_text != blank %}<div class="mvpd__inventory-wrap" data-mvpd-stock-panel data-low-stock="true">
+            <div class="mvpd__stock-head">
+              <div class="mvpd__stock-copy">
+                {% if section.settings.stock_icon != blank %}<span class="mvpd__stock-flame" aria-hidden="true">{{ section.settings.stock_icon | escape }}</span>{% endif %}
+                <strong class="mvpd__inventory">{{ section.settings.reference_stock_text | escape }}</strong>
+                <span class="mvpd__visitor-inline">{{ section.settings.inventory_info | escape }}</span>
+              </div>
+            </div>
+            {% if section.settings.show_stock_progress %}<div class="mvpd__stock-track" aria-hidden="true"><span class="mvpd__stock-fill" style="width:{{ section.settings.manual_stock_progress }}%"></span></div>{% endif %}
+          </div>
+          {% endif %}
+        {% endform %}
+      </div>
+    </div>
+
+    <aside class="mvpd__summary" aria-label="Sipariş özeti">
+      <div class="mvpd__summary-eyebrow">{{ section.settings.studio_summary_kicker | escape }}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></div>
+      <h2 class="mvpd__summary-title"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h2l2 11h13l2-8H5"/></svg>{{ section.settings.summary_heading | escape }}</h2>
+      <div class="mvpd__live-cart-list" data-mvpd-live-cart-list hidden></div>
+      <p class="mvpd__cart-check" data-mvpd-cart-check role="status">Shopify sepeti kontrol ediliyor...</p>
+      <div class="mvpd__summary-item" data-mvpd-base-summary>
+        {% if mv_p.featured_image != blank %}{{ mv_p.featured_image | image_url: width: 144 | image_tag: loading: 'lazy', class: 'mvpd__summary-photo', alt: mv_p.title }}{% endif %}
+        <div class="mvpd__summary-product"><strong>{{ mv_p.title | escape }}</strong><small data-mvpd-selected-title>{% unless mv_p.has_only_default_variant %}{{ mv_v.title | escape }}{% endunless %}</small><button type="button" class="mvpd__bundle-remove" data-mvpd-base-remove aria-label="Tekli ürünü sipariş özetinden kaldır">Tek ürünü kaldır</button></div>
+        <div class="mvpd__summary-item-price"><span data-mvpd-count>{{ mv_min }} {{ section.settings.quantity_unit | escape }}</span><strong data-mvpd-sum-unit>{{ mv_v.price | times: mv_min | money_without_trailing_zeros }}</strong><s data-mvpd-summary-old {% unless mv_sale and section.settings.show_compare_price %}hidden{% endunless %}>{% if mv_sale %}{{ mv_v.compare_at_price | times: mv_min | money_without_trailing_zeros }}{% endif %}</s></div>
+      </div>
+      <div class="mvpd__summary-item mvpd__summary-selected-bundle" data-mvpd-bundle-summary hidden aria-live="polite">
+        <img class="mvpd__summary-photo" data-mvpd-bundle-photo alt="" width="52" height="52" hidden>
+        <div class="mvpd__summary-product">
+          <strong data-mvpd-bundle-name></strong>
+          <small data-mvpd-bundle-detail></small>
+          <button type="button" class="mvpd__bundle-remove" data-mvpd-bundle-remove aria-label="Paketi sipariş özetinden çıkar">Paketi kaldır</button>
+        </div>
+        <div class="mvpd__summary-item-price">
+          <span data-mvpd-bundle-count></span>
+          <strong data-mvpd-bundle-price></strong>
+          <s data-mvpd-bundle-old hidden></s>
+        </div>
+      </div>
+      <div class="mvpd__summary-empty" data-mvpd-summary-empty hidden aria-live="polite">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M7 10h18l2 18H5l2-18Z"/><path d="M11 11V8a5 5 0 0 1 10 0v3"/></svg><strong>Sepetiniz sizi bekliyor.</strong><span>Ürünü veya size uygun paketi seçerek başlayın.</span>
+        <button type="button" class="mvpd__summary-restore" data-mvpd-base-restore>1 adet ekle</button>
+      </div>
+      <div class="mvpd__sums">
+        <div><span>{{ section.settings.subtotal_label | escape }}</span><span data-mvpd-subtotal>{{ mv_origin | times: mv_min | money_without_trailing_zeros }}</span></div>
+        <div class="mvpd__discount-row" data-mvpd-discount-row><span>{{ section.settings.discount_row_label | escape }}</span><span data-mvpd-discount>{% if mv_sale %}-{{ mv_diff | times: mv_min | money_without_trailing_zeros }}{% else %}0{% endif %}</span></div>
+        <div class="mvpd__shipping-row"><span>{{ section.settings.shipping_label | escape }}</span><span data-mvpd-shipping>{{ section.settings.shipping_note | default: '0' | escape }}</span></div>
+      </div>
+      <div class="mvpd__total-box" aria-live="polite" aria-atomic="true">
+        <span>{{ section.settings.total_label | escape }}</span>
+        <div class="mvpd__total-value">
+          <strong data-mvpd-total>{{ mv_v.price | times: mv_min | money_without_trailing_zeros }}</strong>
+          {% if section.settings.mv_show_total_savings %}
+            <small class="mvpd__total-savings-badge" data-mvpd-savings>
+              <span class="mvpd__savings-symbol" aria-hidden="true">{{ section.settings.mv_total_savings_icon | escape }}</span>
+              <span data-mvpd-savings-amount>
+                {% if section.settings.mv_manual_total_savings != blank %}
+                  {{ section.settings.mv_manual_total_savings | escape }}
+                {% elsif mv_sale %}
+                  {{ mv_diff | times: mv_min | money_without_trailing_zeros }}
+                {% else %}
+                  {{ section.settings.mv_total_fallback_text | escape }}
+                {% endif %}
+              </span>
+              <span data-mvpd-savings-label>{% if section.settings.mv_manual_total_savings != blank or mv_sale %}{{ section.settings.savings_label | escape }}{% endif %}</span>
+            </small>
+          {% endif %}
+        </div>
+      </div>
+      {% if section.settings.show_coupon %}
+        <div class="mvpd__coupon"><label for="mvpd-coupon-{{ section.id }}">{{ section.settings.coupon_label | escape }}</label><div class="mvpd__coupon-fields"><input id="mvpd-coupon-{{ section.id }}" type="text" placeholder="{{ section.settings.coupon_placeholder | escape }}" data-mvpd-coupon autocomplete="off"><button type="button" data-mvpd-coupon-apply>{{ section.settings.coupon_button_label | escape }}</button></div><p class="mvpd__coupon-info" data-mvpd-coupon-info hidden>{{ section.settings.coupon_info | escape }}</p></div>
+      {% endif %}
+      <button type="button" class="mvpd__checkout" data-mvpd-checkout disabled>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        <span data-mvpd-checkout-label>{{ section.settings.checkout_label | escape }}</span><span aria-hidden="true">→</span>
+      </button>
+      <div class="mvpd__error" data-mvpd-error role="alert" hidden></div>
+      {% if section.settings.mv_show_payment_area %}
+        <div class="mvpd__payments" aria-label="Ödeme yöntemleri">
+          {% for index in (1..6) %}
+            {% assign payment_image_key = 'payment_image_' | append: index %}
+            {% assign payment_image = section.settings[payment_image_key] %}
+            {% if payment_image != blank %}
+              {{ payment_image | image_url: width: 220 | image_tag: loading: 'lazy', class: 'mvpd__payment-icon', alt: payment_image.alt }}
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% if section.settings.mv_show_installments %}
+        <div class="mvpd__installments" aria-label="Taksit seçenekleri">
+          {% if section.settings.mv_installments_title != blank %}<h3 class="mvpd__installments-title">{{ section.settings.mv_installments_title | escape }}</h3>{% endif %}
+          {% if section.settings.mv_installments_subtitle != blank %}<p class="mvpd__installments-subtitle">{{ section.settings.mv_installments_subtitle | escape }}</p>{% endif %}
+          <div class="mvpd__installment-logos">
+            {% for index in (1..8) %}
+              {% assign installment_image_key = 'mv_installment_image_' | append: index %}
+              {% assign installment_image = section.settings[installment_image_key] %}
+              {% if installment_image != blank %}
+                <span class="mvpd__installment-logo">{{ installment_image | image_url: width: 220 | image_tag: loading: 'lazy', alt: installment_image.alt }}</span>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+      {% if section.settings.show_trust %}
+        <div class="mvpd__trusts">
+          {% if section.settings.show_trust_1 %}<div><span class="mvpd__trust-icon" aria-hidden="true">{% if section.settings.mv_trust_svg_icons %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 10H4V5"/><path d="M4.5 10a8 8 0 1 1 2.2 7"/><path d="M9 13h6"/></svg>{% else %}{{ section.settings.trust_icon_1 | escape }}{% endif %}</span><strong>{{ section.settings.trust_1 | escape }}</strong><small>{{ section.settings.trust_note_1 | escape }}</small></div>{% endif %}
+          {% if section.settings.show_trust_2 %}<div><span class="mvpd__trust-icon" aria-hidden="true">{% if section.settings.mv_trust_svg_icons %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3 8 8 11 5-3 8-6 8-11V5l-8-3Z"/><path d="m8 12 3 3 5-6"/></svg>{% else %}{{ section.settings.trust_icon_2 | escape }}{% endif %}</span><strong>{{ section.settings.trust_2 | escape }}</strong><small>{{ section.settings.trust_note_2 | escape }}</small></div>{% endif %}
+          {% if section.settings.show_trust_3 %}<div><span class="mvpd__trust-icon" aria-hidden="true">{% if section.settings.mv_trust_svg_icons %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v11H3zM14 11h4l3 4v3h-7"/><circle cx="7.5" cy="19" r="2"/><circle cx="17.5" cy="19" r="2"/></svg>{% else %}{{ section.settings.trust_icon_3 | escape }}{% endif %}</span><strong>{{ section.settings.trust_3 | escape }}</strong><small>{{ section.settings.trust_note_3 | escape }}</small></div>{% endif %}
+          {% if section.settings.show_trust_4 %}<div><span class="mvpd__trust-icon" aria-hidden="true">{% if section.settings.mv_trust_svg_icons %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h5"/></svg>{% else %}{{ section.settings.trust_icon_4 | escape }}{% endif %}</span><strong>{{ section.settings.trust_4 | escape }}</strong><small>{{ section.settings.trust_note_4 | escape }}</small></div>{% endif %}
+        </div>
+      {% endif %}
+      {% if section.settings.show_satisfaction and section.settings.summary_note != blank %}<div class="mvpd__summary-note"><span aria-hidden="true" class="mvpd__medal">{% if section.settings.satisfaction_icon_custom != blank %}<span class="mvpd__medal-custom">{{ section.settings.satisfaction_icon_custom | escape }}</span>{% else %}<svg viewBox="0 0 48 56" fill="none"><path d="M15 35 10 54l14-7 14 7-5-19" fill="#b68a30"/><path d="m24 2 6 4 8 1 1 8 6 6-5 8-1 8-9 2-6 6-7-6-8-2-2-8-5-8 5-7 2-8 8-1 7-4Z" fill="#ad8133"/><circle cx="24" cy="22" r="13" fill="#FDF2D6"/><path d="m24 13 2.5 6 6.5.5-5 4.5 1.5 6-5.5-3.5-5.5 3.5 1.5-6-5-4.5 6.5-.5Z" fill="#AA7B28"/></svg>{% endif %}</span><p>{% if section.settings.summary_note_title != blank %}<strong>{{ section.settings.summary_note_title | default: 'Müşteri Memnuniyeti' | escape }}</strong>{% endif %}{{ section.settings.summary_note | escape }}</p></div>{% endif %}
+    </aside>
+    <div class="mvpd__bundle-in-slot" data-mvpd-bundle-in-slot>
+      <section class="mv-onepack" aria-labelledby="mvpd-packs-title-{{ section.id }}">
+        <div class="mv-onepack__heading"><div><span class="mv-onepack__eyebrow">{{ section.settings.studio_package_kicker | escape }}</span><h2 id="mvpd-packs-title-{{ section.id }}">{{ section.settings.studio_package_heading | escape }}</h2></div><p>{{ section.settings.studio_package_text | escape }}</p></div>
+        <div class="mv-onepack__grid">
+          {% for pack_number in (1..3) %}
+            {% liquid
+              assign pack_block = blank
+              for block in section.blocks
+                if block.type == 'bundle' and block.settings.qty == pack_number
+                  assign pack_block = block
+                  break
+                endif
+              endfor
+              assign pack_image = mv_p.featured_image
+              if pack_block != blank and pack_block.settings.image != blank
+                assign pack_image = pack_block.settings.image
+              endif
+              assign pack_accent = section.settings.accent
+              assign pack_soft = section.settings.soft_color
+              if pack_number == 2
+                assign pack_accent = section.settings.accent
+                assign pack_soft = section.settings.soft_color
+              elsif pack_number == 3
+                assign pack_accent = section.settings.accent
+                assign pack_soft = section.settings.soft_color
+              endif
+              if pack_block != blank
+                assign pack_accent = pack_block.settings.accent | default: pack_accent
+                assign pack_soft = pack_block.settings.soft | default: pack_soft
+              endif
+              assign pack_total = mv_v.price | times: pack_number
+            %}
+            <article class="mv-onepack__card{% if pack_number == 2 %} mv-onepack__card--featured{% endif %}" data-mv-pack data-qty="{{ pack_number }}" {{ pack_block.shopify_attributes }} style="--pack-accent:{{ pack_accent }};--pack-soft:{{ pack_soft }}">
+              {% if pack_number == 2 %}<div class="mv-onepack__ribbon"><span aria-hidden="true">✦</span> {{ section.settings.mv_b16_featured_badge_fallback | escape }}</div>{% endif %}
+              <div class="mv-onepack__visual mv-onepack__visual--{{ pack_number }}" aria-hidden="true">
+                {% if pack_image != blank %}
+                  {% for image_copy in (1..pack_number) %}
+                    {{ pack_image | image_url: width: 500 | image_tag: loading: 'lazy', class: 'mv-onepack__img' }}
+                  {% endfor %}
+                {% else %}
+                  {{ 'product-1' | placeholder_svg_tag: 'mv-onepack__img mv-onepack__img--placeholder' }}
+                {% endif %}
+              </div>
+              <div class="mv-onepack__qty-label"><span>{{ pack_number }} <small>ADET</small></span><span class="mv-onepack__choice-icon" aria-hidden="true">✓</span></div>
+              <p class="mv-onepack__unit-price" data-mv-pack-unit>{{ mv_v.price | money_without_trailing_zeros }} / adet</p><strong class="mv-onepack__price" data-mv-pack-price>{{ pack_total | money_without_trailing_zeros }}</strong>
+              <small class="mv-onepack__real-saving" data-mv-pack-saving hidden></small>
+              <button class="mv-onepack__button" type="button" data-mv-pack-select aria-pressed="false" {% unless mv_v.available %}disabled{% endunless %}>{{ section.settings.mv_b16_button_text | escape }}</button>
+            </article>
+          {% endfor %}
+        </div>
+        {% if section.settings.studio_package_note != blank %}<p class="mv-onepack__note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></svg>{{ section.settings.studio_package_note | escape }}</p>{% endif %}
+      </section>
+    </div>
+  </div>
+  {% for app_block in section.blocks %}{% if app_block.type == '@app' %}<div class="mvpd__apps">{% render app_block %}</div>{% endif %}{% endfor %}
+{% endif %}
+{% capture studio_config %}{
+  "productId":{{ mv_p.id | json }},
+  "checkoutLabel":{{ section.settings.checkout_label | json }},
+  "loadingLabel":{{ section.settings.loading_button_label | json }},
+  "unitText":{{ section.settings.quantity_unit | json }},
+  "showCompare":{{ section.settings.show_compare_price | json }},
+  "currency":{{ cart.currency.iso_code | default: shop.currency | json }},
+  "addLabel":{{ section.settings.studio_add_label | json }},
+  "soldLabel":{{ section.settings.variant_sold_out_label | json }},
+  "manualSaving":{{ section.settings.savings_value | json }},
+  "packLabel":{{ section.settings.mv_b16_button_text | json }},
+  "variants":[{% for variant in mv_p.variants %}{"id":{{ variant.id | json }},"price":{{ variant.price | json }},"compare":{{ variant.compare_at_price | default: 0 | json }},"available":{{ variant.available | json }},"min":{{ variant.quantity_rule.min | default: 1 | json }},"inc":{{ variant.quantity_rule.increment | default: 1 | json }},"max":{% if variant.quantity_rule.max != blank %}{{ variant.quantity_rule.max | json }}{% else %}null{% endif %},"mediaId":{{ variant.featured_media.id | default: '' | json }},"title":{{ variant.title | json }}}{% unless forloop.last %},{% endunless %}{% endfor %}]
+}{% endcapture %}
+<script type="application/json" data-mvpd-config>{{ studio_config | replace: '<', '\u003c' }}</script>
+</section>
+
+<style>
+/* Product Studio: one scoped design system, no external styles or fonts. */
+#mvpd-{{ section.id }}{
+  --studio-ink:var(--mvpd-head);--studio-line:var(--mvpd-border);--studio-accent:var(--mvpd-accent);
+  background:{{ section.settings.page_background }};color:var(--studio-ink);padding:30px 32px 64px;
+  font-family:var(--font-body--family,inherit);font-size:14px;line-height:1.5;isolation:isolate;
+  -webkit-font-smoothing:antialiased;
+}
+#mvpd-{{ section.id }} *,#mvpd-{{ section.id }} *::before,#mvpd-{{ section.id }} *::after{box-sizing:border-box}
+#mvpd-{{ section.id }} [hidden]{display:none!important}
+#mvpd-{{ section.id }} :is(h1,h2,h3,p){margin:0;overflow-wrap:anywhere}
+#mvpd-{{ section.id }} :is(button,input,select){font:inherit;letter-spacing:normal}
+#mvpd-{{ section.id }} button{touch-action:manipulation;cursor:pointer}
+#mvpd-{{ section.id }} button:disabled{cursor:not-allowed;opacity:.48}
+#mvpd-{{ section.id }} :is(button,a,input,select):focus-visible{outline:3px solid var(--studio-accent);outline-offset:4px;box-shadow:0 0 0 6px white}
+#mvpd-{{ section.id }} svg{display:block;flex:none;width:20px;height:20px}
+#mvpd-{{ section.id }} .mvpd__topline{max-width:var(--mvpd-width);margin:0 auto 27px;display:flex;justify-content:space-between;align-items:center;gap:20px}
+#mvpd-{{ section.id }} .mvpd__breadcrumb{display:flex;align-items:center;gap:10px;min-width:0;font-size:11px;color:var(--mvpd-muted)}
+#mvpd-{{ section.id }} .mvpd__breadcrumb a{color:inherit;text-decoration:none;white-space:nowrap}
+#mvpd-{{ section.id }} .mvpd__breadcrumb>span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:320px}
+#mvpd-{{ section.id }} .mvpd__edition{display:flex;gap:8px;align-items:center;font-size:9px;letter-spacing:.16em;font-weight:650;color:var(--mvpd-muted);text-align:right}
+#mvpd-{{ section.id }} .mvpd__edition>span{width:6px;height:6px;border-radius:50%;background:var(--studio-accent);flex:none}
+#mvpd-{{ section.id }} .mvpd__layout{max-width:var(--mvpd-width);margin:auto;display:grid;grid-template-columns:minmax(0,1fr) 330px;grid-template-areas:"main summary" "packs summary";gap:36px 32px;align-items:start}
+#mvpd-{{ section.id }} .mvpd__main{grid-area:main;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;min-width:0;align-items:start}
+#mvpd-{{ section.id }} .mvpd__gallery{min-width:0;display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+#mvpd-{{ section.id }} .mvpd__viewer{position:relative;height:clamp(380px,38vw,520px);min-width:0;border:1px solid var(--studio-line);border-radius:var(--mvpd-radius);overflow:hidden;background:{{ section.settings.product_image_bg }}}
+#mvpd-{{ section.id }} .mvpd__media-item{position:absolute;inset:0;align-items:center;justify-content:center;display:flex;width:100%;height:100%}
+#mvpd-{{ section.id }} .mvpd__media-item :is(img,video,iframe,model-viewer){display:block;width:100%;height:100%;object-fit:{{ section.settings.image_fit }};border:0}
+#mvpd-{{ section.id }} .mvpd__media-item>svg{width:80%;height:80%}
+#mvpd-{{ section.id }} .mvpd__sale-flag{position:absolute;top:17px;left:17px;z-index:2;border:1px solid rgb(255 255 255 / .65);background:var(--mvpd-gallery-badge);color:var(--mvpd-gallery-badge-text);padding:7px 11px;border-radius:999px;font-size:10px;font-weight:650}
+#mvpd-{{ section.id }} .mvpd__media-slogan{position:absolute;z-index:2;right:17px;bottom:17px;max-width:180px;background:rgb(255 255 255 / .9);color:var(--studio-ink);padding:9px 13px;border-radius:10px;font-size:11px;backdrop-filter:blur(8px)}
+#mvpd-{{ section.id }} .mvpd__thumbs{display:flex;gap:9px;overflow-x:auto;padding:3px 3px 6px;scroll-snap-type:x mandatory;scrollbar-width:thin;scrollbar-color:var(--studio-line) transparent}
+#mvpd-{{ section.id }} .mvpd__thumb{flex:0 0 64px;width:64px;height:70px;border:1px solid var(--studio-line);border-radius:11px;position:relative;background:{{ section.settings.mv_gallery_thumb_bg }};padding:4px;overflow:hidden;scroll-snap-align:start;transition:border-color .2s ease,box-shadow .2s ease}
+#mvpd-{{ section.id }} .mvpd__thumb.is-active{border-color:{{ section.settings.mv_selected_thumb_border }};box-shadow:0 0 0 1px {{ section.settings.mv_selected_thumb_border }}}
+#mvpd-{{ section.id }} .mvpd__thumb img{display:block;width:100%;height:100%;object-fit:contain;border-radius:6px}
+#mvpd-{{ section.id }} .mvpd__thumb-more{display:none}
+#mvpd-{{ section.id }} .mvpd__play{position:absolute;inset:0;display:grid;place-items:center;font-size:12px;color:white;background:rgb(0 0 0 / .25)}
+#mvpd-{{ section.id }} .mvpd__gallery-footer{display:flex;justify-content:space-between;gap:12px;align-items:center;color:var(--mvpd-muted);font-size:10px;padding-inline:2px}
+#mvpd-{{ section.id }} .mvpd__gallery-navigation{display:flex;gap:9px;align-items:center;flex:none;font-size:10px;font-variant-numeric:tabular-nums}
+#mvpd-{{ section.id }} .mvpd__gallery-navigation button{display:grid;place-items:center;width:32px;height:32px;background:transparent;color:var(--studio-ink);border:1px solid var(--studio-line);border-radius:50%;font-size:16px}
+#mvpd-{{ section.id }} .mvpd__details{min-width:0;padding:5px 0}
+#mvpd-{{ section.id }} .mvpd__vendor{margin-bottom:12px;color:var(--studio-accent);font-size:10px;text-transform:uppercase;letter-spacing:.18em;font-weight:700}
+#mvpd-{{ section.id }} .mvpd__title{font-family:var(--font-heading--family,inherit);font-size:clamp(27px,2.65vw,40px);font-weight:650;letter-spacing:-.045em;line-height:1.13;text-wrap:balance;margin-bottom:14px}
+#mvpd-{{ section.id }} .mvpd__subtitle{color:{{ section.settings.subtitle_text_color }};font-size:13px;line-height:1.7;margin-bottom:17px}
+#mvpd-{{ section.id }} .mvpd__review{display:flex;flex-wrap:wrap;gap:7px;align-items:center;font-size:11px;color:var(--mvpd-review-text);margin-bottom:19px}
+#mvpd-{{ section.id }} .mvpd__review-stars{color:{{ section.settings.rating_star_color }};letter-spacing:1px;font-size:12px}
+#mvpd-{{ section.id }} .mvpd__rating-value{font-size:11px}
+#mvpd-{{ section.id }} .mvpd__rating-count{font-size:10px;color:var(--mvpd-muted)}
+#mvpd-{{ section.id }} .mvpd__social-proof{display:inline-flex;gap:5px;align-items:center;background:var(--mvpd-social-bg);color:var(--mvpd-social-text);padding:5px 8px;border-radius:6px;font-size:10px}
+#mvpd-{{ section.id }} .mvpd__form{display:flex;flex-direction:column;margin:0;gap:0}
+#mvpd-{{ section.id }} .mvpd__price-area{margin:0 0 22px;padding-bottom:22px;border-bottom:1px solid var(--studio-line)}
+#mvpd-{{ section.id }} .mvpd__price-area>s{color:{{ section.settings.mv_old_price_color }};display:block;font-size:13px;line-height:1.2;margin-bottom:6px}
+#mvpd-{{ section.id }} .mvpd__price-line{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+#mvpd-{{ section.id }} [data-mvpd-unit]{font-size:32px;line-height:1.1;font-weight:650;letter-spacing:-.05em;color:var(--mvpd-price);font-variant-numeric:tabular-nums}
+#mvpd-{{ section.id }} .mvpd__pct{background:var(--mvpd-price-badge-bg);color:var(--mvpd-price-badge-text);font-size:9px;font-weight:700;padding:5px 7px;border-radius:5px}
+#mvpd-{{ section.id }} .mvpd__save{display:flex;gap:4px;align-items:baseline;color:var(--mvpd-muted);font-size:10px;flex-basis:100%;margin-top:2px}
+#mvpd-{{ section.id }} .mvpd__save b{color:var(--studio-accent);font-weight:650}
+#mvpd-{{ section.id }} .mvpd__save small{font-size:10px}
+#mvpd-{{ section.id }} .mvpd__features{list-style:none;display:grid;gap:10px;padding:0;margin:0 0 24px;color:var(--mvpd-feature-text)}
+#mvpd-{{ section.id }} .mvpd__features li{display:flex;align-items:flex-start;gap:9px;font-size:12px;line-height:1.55}
+#mvpd-{{ section.id }} .mvpd__feature-check{display:grid;place-items:center;width:18px;height:18px;flex:0 0 18px;margin-top:1px;background:{{ section.settings.mv_feature_icon_bg }};color:{{ section.settings.mv_feature_icon_color }};border-radius:50%;font-size:10px;font-weight:700}
+#mvpd-{{ section.id }} .mvpd__field-label{display:block;color:{{ section.settings.mv_input_label_color }};font-size:11px;font-weight:650;margin-bottom:8px}
+#mvpd-{{ section.id }} .mvpd__variant{display:block;width:100%;min-height:46px;max-width:100%;padding:11px 35px 11px 13px;color:var(--studio-ink);background:var(--mvpd-surface);border:1px solid var(--studio-line);border-radius:10px;cursor:pointer;font-size:12px;margin-bottom:17px}
+#mvpd-{{ section.id }} .mvpd__purchase-row{display:flex;gap:15px;align-items:flex-end;margin-bottom:16px}
+#mvpd-{{ section.id }} .mvpd__quantity-area{min-width:0}
+#mvpd-{{ section.id }} .mvpd__qty{display:inline-flex;align-items:center;border:1px solid {{ section.settings.mv_qty_border_color }};border-radius:10px;background:{{ section.settings.quantity_bg }};overflow:hidden}
+#mvpd-{{ section.id }} .mvpd__qty button{border:0;background:{{ section.settings.mv_qty_button_bg }};color:{{ section.settings.mv_qty_button_text }};height:44px;width:40px;font-size:19px;display:grid;place-items:center}
+#mvpd-{{ section.id }} .mvpd__qty input{width:42px;height:44px;padding:0;border:0;appearance:textfield;background:transparent;color:{{ section.settings.quantity_text }};text-align:center;font-size:13px;font-weight:650;min-width:0}
+#mvpd-{{ section.id }} .mvpd__qty input::-webkit-inner-spin-button,#mvpd-{{ section.id }} .mvpd__qty input::-webkit-outer-spin-button{appearance:none;margin:0}
+#mvpd-{{ section.id }} .mvpd__main-action{display:grid;gap:10px;margin-bottom:18px}
+#mvpd-{{ section.id }} .mvpd__add{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:50px;padding:13px 18px;color:{{ section.settings.mv_checkout_text_color }};background:var(--studio-accent);border:1px solid var(--studio-accent);border-radius:11px;font-size:13px;font-weight:650;transition:background .2s ease,box-shadow .2s ease}
+#mvpd-{{ section.id }} .mvpd__add>svg{width:19px;height:19px}
+#mvpd-{{ section.id }} .mvpd__action-note{display:flex;gap:6px;justify-content:center;align-items:center;color:var(--mvpd-muted);font-size:9px}
+#mvpd-{{ section.id }} .mvpd__action-note svg{width:12px;height:12px}
+#mvpd-{{ section.id }} .mvpd__inventory-wrap{background:var(--mvpd-stock-bg);color:var(--mvpd-stock-text);padding:12px 13px;border-radius:10px;font-size:11px}
+#mvpd-{{ section.id }} .mvpd__stock-copy{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+#mvpd-{{ section.id }} .mvpd__visitor-inline{font-size:10px;flex-basis:100%}
+#mvpd-{{ section.id }} .mvpd__stock-track{height:3px;margin-top:9px;border-radius:5px;overflow:hidden;background:var(--mvpd-stock-bar-bg)}
+#mvpd-{{ section.id }} .mvpd__stock-fill{display:block;height:100%;background:var(--mvpd-stock-bar)}
+#mvpd-{{ section.id }} .mvpd__summary{grid-area:summary;position:sticky;top:calc(var(--header-height,0px) + 24px);min-width:0;background:var(--mvpd-summary-bg);border:1px solid var(--studio-line);border-radius:var(--mvpd-radius);padding:25px 23px;box-shadow:0 12px 36px rgb(27 49 34 / .035)}
+#mvpd-{{ section.id }} .mvpd__summary-eyebrow{display:flex;justify-content:space-between;align-items:center;font-size:9px;letter-spacing:.17em;color:var(--mvpd-muted);margin-bottom:8px;font-weight:600}
+#mvpd-{{ section.id }} .mvpd__summary-eyebrow>svg{width:15px;height:15px}
+#mvpd-{{ section.id }} .mvpd__summary-title{font-size:22px;letter-spacing:-.035em;line-height:1.2;font-weight:650;color:{{ section.settings.mv_summary_heading_color }};display:flex;align-items:center;gap:9px;margin-bottom:22px}
+#mvpd-{{ section.id }} .mvpd__summary-title svg{display:none}
+#mvpd-{{ section.id }} .mvpd__cart-check{font-size:11px;color:var(--mvpd-muted);padding:12px 0;line-height:1.5}
+#mvpd-{{ section.id }} .mvpd__summary-item{display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:start;gap:10px;padding:15px 0;border-bottom:1px solid var(--studio-line);min-width:0}
+#mvpd-{{ section.id }} .mvpd__summary-photo{width:48px;height:58px;object-fit:contain;display:block;background:var(--mvpd-soft);border-radius:8px}
+#mvpd-{{ section.id }} .mvpd__summary-product{min-width:0}
+#mvpd-{{ section.id }} .mvpd__summary-product strong{display:block;font-size:11px;line-height:1.5;font-weight:650;overflow-wrap:anywhere}
+#mvpd-{{ section.id }} .mvpd__summary-product small{display:block;font-size:10px;color:var(--mvpd-muted);margin-top:3px}
+#mvpd-{{ section.id }} .mvpd__bundle-remove{padding:5px 0;min-height:30px;border:0;background:transparent;text-align:left;font-size:9px;color:var(--mvpd-muted);text-decoration:underline;text-underline-offset:3px}
+#mvpd-{{ section.id }} .mvpd__summary-item-price{text-align:right;font-variant-numeric:tabular-nums;max-width:90px}
+#mvpd-{{ section.id }} .mvpd__summary-item-price>span{display:block;font-size:10px;color:var(--mvpd-muted);margin-bottom:5px}
+#mvpd-{{ section.id }} .mvpd__summary-item-price>strong{display:block;font-size:12px;line-height:1.4;font-weight:650;color:var(--studio-ink)}
+#mvpd-{{ section.id }} .mvpd__summary-item-price>s{font-size:10px;color:var(--mvpd-muted)}
+#mvpd-{{ section.id }} .mvpd__summary-empty{display:grid;justify-items:center;gap:10px;padding:22px 14px;margin:3px 0 20px;border:1px dashed var(--studio-line);border-radius:13px;text-align:center;background:var(--mvpd-soft);color:var(--mvpd-muted);font-size:11px;line-height:1.6}
+#mvpd-{{ section.id }} .mvpd__summary-empty>svg{width:30px;height:30px;color:var(--studio-accent);margin-bottom:2px}
+#mvpd-{{ section.id }} .mvpd__summary-empty>strong{font-size:13px;font-weight:600;color:var(--studio-ink)}
+#mvpd-{{ section.id }} .mvpd__summary-restore{background:transparent;border:1px solid var(--studio-line);border-radius:7px;color:var(--studio-accent);font-size:11px;padding:7px 12px;min-height:36px}
+#mvpd-{{ section.id }} .mvpd__sums{display:grid;gap:11px;margin:20px 0}
+#mvpd-{{ section.id }} .mvpd__sums>div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;color:{{ section.settings.mv_summary_label_color }};font-size:11px}
+#mvpd-{{ section.id }} .mvpd__sums>div>span:last-child{text-align:right;font-weight:550;color:{{ section.settings.mv_summary_value_color }};font-variant-numeric:tabular-nums}
+#mvpd-{{ section.id }} .mvpd__sums>.mvpd__discount-row>span:last-child{color:{{ section.settings.mv_discount_text_color }}}
+#mvpd-{{ section.id }} .mvpd__sums .mvpd__shipping-row>span:last-child{font-size:10px;font-weight:400;max-width:160px}
+#mvpd-{{ section.id }} .mvpd__total-box{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--mvpd-total-bg);padding:16px 14px;border-radius:11px;margin-bottom:17px}
+#mvpd-{{ section.id }} .mvpd__total-box>span{font-size:12px;font-weight:600;color:{{ section.settings.mv_total_label_color }}}
+#mvpd-{{ section.id }} .mvpd__total-value{text-align:right;min-width:0}
+#mvpd-{{ section.id }} [data-mvpd-total]{display:block;font-size:27px;font-weight:650;line-height:1.1;letter-spacing:-.055em;color:var(--studio-ink);font-variant-numeric:tabular-nums}
+#mvpd-{{ section.id }} .mvpd__total-savings-badge{display:block;font-size:9px;color:var(--studio-accent);margin-top:7px}
+#mvpd-{{ section.id }} .mvpd__coupon{margin:0 0 17px}
+#mvpd-{{ section.id }} .mvpd__coupon>label{display:block;font-size:10px;font-weight:600;margin-bottom:7px;color:var(--mvpd-muted)}
+#mvpd-{{ section.id }} .mvpd__coupon-fields{display:flex;gap:7px}
+#mvpd-{{ section.id }} .mvpd__coupon-fields input{width:100%;min-width:0;border:1px solid var(--studio-line);border-radius:8px;background:transparent;font-size:11px;padding:10px 11px;color:var(--studio-ink)}
+#mvpd-{{ section.id }} .mvpd__coupon-fields button{flex:none;border:1px solid var(--studio-line);border-radius:8px;background:{{ section.settings.coupon_button_bg }};color:{{ section.settings.coupon_button_text }};padding:9px 12px;font-size:11px;font-weight:600;min-height:42px}
+#mvpd-{{ section.id }} .mvpd__coupon-info{color:var(--mvpd-muted);font-size:10px;margin-top:7px}
+#mvpd-{{ section.id }} .mvpd__checkout{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:52px;padding:13px 14px;background:linear-gradient(120deg,var(--mvpd-accent),var(--mvpd-accent-dark));color:{{ section.settings.mv_checkout_text_color }};border:1px solid transparent;border-radius:10px;font-size:12px;font-weight:600;line-height:1.4;transition:box-shadow .2s ease,filter .2s ease}
+#mvpd-{{ section.id }} .mvpd__checkout svg{width:16px;height:16px}
+#mvpd-{{ section.id }} .mvpd__checkout>span:last-child{margin-left:auto;font-size:17px}
+#mvpd-{{ section.id }} .mvpd__error{background:#fff0ed;border:1px solid #edc6bd;border-radius:9px;color:#923021;font-size:11px;padding:12px;margin-top:12px;line-height:1.6}
+#mvpd-{{ section.id }} .mvpd__payments{display:flex;flex-wrap:wrap;gap:{{ section.settings.mv_payment_gap }}px;align-items:center;justify-content:center;padding:{{ section.settings.mv_payment_padding }}px 0;background:var(--mvpd-payment-bg)}
+#mvpd-{{ section.id }} .mvpd__payments:empty{display:none}
+#mvpd-{{ section.id }} .mvpd__payment-icon{width:{{ section.settings.mv_payment_width }}px;height:{{ section.settings.mv_payment_height }}px;object-fit:contain}
+#mvpd-{{ section.id }} .mvpd__installments{border-top:1px solid var(--studio-line);margin-top:18px;padding-top:16px}
+#mvpd-{{ section.id }} .mvpd__installments-title{font-size:12px;font-weight:600;margin-bottom:5px}
+#mvpd-{{ section.id }} .mvpd__installments-subtitle{font-size:10px;color:var(--mvpd-muted)}
+#mvpd-{{ section.id }} .mvpd__installment-logos{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px}
+#mvpd-{{ section.id }} .mvpd__installment-logo img{width:58px;height:30px;object-fit:contain}
+#mvpd-{{ section.id }} .mvpd__trusts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 12px;border-top:1px solid var(--studio-line);margin-top:22px;padding-top:20px}
+#mvpd-{{ section.id }} .mvpd__trusts>div{display:grid;grid-template-columns:25px minmax(0,1fr);gap:2px 7px;align-content:start;align-items:center;min-width:0;text-align:left}
+#mvpd-{{ section.id }} .mvpd__trust-icon{display:grid;place-items:center;grid-row:1/3;width:25px;height:29px;font-size:20px;color:var(--mvpd-trust-icon)}
+#mvpd-{{ section.id }} .mvpd__trust-icon svg{width:21px;height:21px}
+#mvpd-{{ section.id }} .mvpd__trusts strong{font-size:9px;line-height:1.4;font-weight:650;color:{{ section.settings.mv_trust_title_color }}}
+#mvpd-{{ section.id }} .mvpd__trusts small{font-size:8px;line-height:1.5;color:{{ section.settings.mv_trust_note_color }}}
+#mvpd-{{ section.id }} .mvpd__summary-note{display:flex;align-items:center;gap:11px;margin-top:20px;padding:12px 13px;border-radius:10px;background:var(--mvpd-satisfaction-bg);color:var(--mvpd-satisfaction-text)}
+#mvpd-{{ section.id }} .mvpd__medal{flex:none}
+#mvpd-{{ section.id }} .mvpd__medal svg{width:26px;height:33px}
+#mvpd-{{ section.id }} .mvpd__summary-note p{font-size:9px;line-height:1.65}
+#mvpd-{{ section.id }} .mvpd__summary-note strong{display:block;font-size:10px;font-weight:600;margin-bottom:2px}
+#mvpd-{{ section.id }} .mvpd__bundle-in-slot{grid-area:packs;min-width:0;border-top:1px solid var(--studio-line);padding-top:30px}
+#mvpd-{{ section.id }} .mv-onepack__heading{display:flex;align-items:flex-end;justify-content:space-between;gap:25px;margin-bottom:26px}
+#mvpd-{{ section.id }} .mv-onepack__eyebrow{display:block;font-size:9px;letter-spacing:.15em;font-weight:600;color:var(--studio-accent);margin-bottom:7px}
+#mvpd-{{ section.id }} .mv-onepack__heading h2{font-size:28px;font-weight:550;line-height:1.15;letter-spacing:-.045em}
+#mvpd-{{ section.id }} .mv-onepack__heading p{font-size:11px;line-height:1.6;color:var(--mvpd-muted);max-width:250px}
+#mvpd-{{ section.id }} .mv-onepack__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+#mvpd-{{ section.id }} .mv-onepack__card{position:relative;border:1px solid var(--studio-line);border-radius:16px;padding:14px;background:var(--mvpd-surface);min-width:0;transition:border-color .2s ease,box-shadow .2s ease}
+#mvpd-{{ section.id }} .mv-onepack__card--featured{border-color:var(--pack-accent);background:var(--pack-soft)}
+#mvpd-{{ section.id }} .mv-onepack__ribbon{position:absolute;z-index:2;top:-10px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--pack-accent);color:white;padding:4px 10px;font-size:8px;font-weight:600;border-radius:999px;display:flex;gap:4px;align-items:center}
+#mvpd-{{ section.id }} .mv-onepack__visual{height:138px;position:relative;display:flex;align-items:center;justify-content:center;isolation:isolate;overflow:hidden;border-radius:9px;background:var(--mvpd-soft);margin-bottom:14px}
+#mvpd-{{ section.id }} .mv-onepack__visual img{height:90%;max-width:68%;width:auto;object-fit:contain;mix-blend-mode:multiply;position:relative;flex:none}
+#mvpd-{{ section.id }} .mv-onepack__visual--2 img{max-width:48%;height:80%}
+#mvpd-{{ section.id }} .mv-onepack__visual--2 img+img{margin-left:-14%;transform:translateY(5px)}
+#mvpd-{{ section.id }} .mv-onepack__visual--3 img{max-width:38%;height:72%}
+#mvpd-{{ section.id }} .mv-onepack__visual--3 img+img{margin-left:-15%;transform:translateY(5px)}
+#mvpd-{{ section.id }} .mv-onepack__visual svg{width:65%;height:85%}
+#mvpd-{{ section.id }} .mv-onepack__qty-label{display:flex;justify-content:space-between;align-items:center;font-size:16px;line-height:1;font-weight:600;margin-bottom:6px}
+#mvpd-{{ section.id }} .mv-onepack__qty-label small{font-size:9px;letter-spacing:.04em;font-weight:500}
+#mvpd-{{ section.id }} .mv-onepack__choice-icon{display:grid;place-items:center;width:17px;height:17px;border:1px solid var(--studio-line);border-radius:50%;color:transparent;font-size:10px}
+#mvpd-{{ section.id }} .mv-onepack__unit-price{font-size:9px;color:var(--mvpd-muted);margin-bottom:10px}
+#mvpd-{{ section.id }} .mv-onepack__price{display:block;font-size:23px;line-height:1.15;letter-spacing:-.04em;font-weight:600;font-variant-numeric:tabular-nums;margin-bottom:12px}
+#mvpd-{{ section.id }} .mv-onepack__real-saving{display:block;font-size:9px;color:var(--studio-accent);margin:-6px 0 10px}
+#mvpd-{{ section.id }} .mv-onepack__button{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:40px;border:1px solid var(--studio-line);border-radius:8px;background:transparent;color:var(--studio-ink);padding:8px;font-size:11px;font-weight:600;line-height:1.4}
+#mvpd-{{ section.id }} .mv-onepack__card--featured .mv-onepack__button{background:var(--pack-accent);color:white;border-color:var(--pack-accent)}
+#mvpd-{{ section.id }} .mv-onepack__card.is-summary-selected{border-color:var(--pack-accent);box-shadow:0 0 0 1px var(--pack-accent)}
+#mvpd-{{ section.id }} .mv-onepack__card.is-summary-selected .mv-onepack__choice-icon{background:var(--pack-accent);border-color:var(--pack-accent);color:white}
+#mvpd-{{ section.id }} .mv-onepack__note>svg{width:12px;height:12px;position:relative;top:2px}
+#mvpd-{{ section.id }} .mv-onepack__note{display:flex;justify-content:center;align-items:baseline;gap:6px;color:var(--mvpd-muted);font-size:9px;line-height:1.6;text-align:center;margin-top:16px}
+#mvpd-{{ section.id }} .mvpd__apps{max-width:var(--mvpd-width);margin:30px auto 0}
+#mvpd-{{ section.id }} .mvpd__empty{max-width:700px;margin:auto;border:1px dashed var(--studio-line);border-radius:20px;padding:40px;text-align:center;font-size:14px;color:var(--mvpd-muted)}
+@media(hover:hover) and (prefers-reduced-motion:no-preference){
+ #mvpd-{{ section.id }} :is(.mvpd__add,.mvpd__checkout):hover:not(:disabled){filter:brightness(1.08);box-shadow:0 5px 16px rgb(27 49 34 / .13)}
+ #mvpd-{{ section.id }} .mv-onepack__card:hover{border-color:var(--pack-accent)}
+ #mvpd-{{ section.id }} .mvpd__thumb:hover{border-color:var(--studio-accent)}
+}
+@media(min-width:1600px){#mvpd-{{ section.id }} .mvpd__layout{grid-template-columns:minmax(0,1fr) 360px;gap:38px 42px}#mvpd-{{ section.id }} .mvpd__main{gap:36px}}
+@media(max-width:1199px){
+ #mvpd-{{ section.id }}{padding:24px 24px 50px}
+ #mvpd-{{ section.id }} .mvpd__layout{grid-template-columns:minmax(0,1fr) 300px;gap:26px 23px}
+ #mvpd-{{ section.id }} .mvpd__main{gap:20px}
+ #mvpd-{{ section.id }} .mvpd__summary{padding:22px 19px}
+ #mvpd-{{ section.id }} .mvpd__title{font-size:29px}
+ #mvpd-{{ section.id }} .mv-onepack__visual{height:115px}
+ #mvpd-{{ section.id }} .mv-onepack__card{padding:12px}
+ #mvpd-{{ section.id }} .mv-onepack__heading{gap:18px}
+ #mvpd-{{ section.id }} .mv-onepack__heading p{max-width:190px}
+}
+@media(max-width:999px){
+ #mvpd-{{ section.id }} .mvpd__layout{grid-template-columns:minmax(0,1fr);grid-template-areas:"main" "packs" "summary";gap:32px}
+ #mvpd-{{ section.id }} .mvpd__summary{position:static;max-width:100%;padding:25px}
+ #mvpd-{{ section.id }} .mvpd__main{gap:28px}
+ #mvpd-{{ section.id }} .mvpd__viewer{height:450px}
+ #mvpd-{{ section.id }} .mvpd__title{font-size:36px}
+ #mvpd-{{ section.id }} .mv-onepack__visual{height:160px}
+ #mvpd-{{ section.id }} .mvpd__trusts{grid-template-columns:repeat(4,minmax(0,1fr))}
+ #mvpd-{{ section.id }} .mvpd__summary-photo{width:52px;height:64px}
+ #mvpd-{{ section.id }} .mvpd__summary-item{grid-template-columns:52px minmax(0,1fr) auto}
+}
+@media(max-width:749px){
+ #mvpd-{{ section.id }}{padding:18px 18px 34px}
+ #mvpd-{{ section.id }} .mvpd__topline{margin-bottom:19px}
+ #mvpd-{{ section.id }} .mvpd__edition{display:none}
+ #mvpd-{{ section.id }} .mvpd__breadcrumb{font-size:10px}
+ #mvpd-{{ section.id }} .mvpd__breadcrumb>span:last-child{max-width:240px}
+ #mvpd-{{ section.id }} .mvpd__layout{gap:29px}
+ #mvpd-{{ section.id }} .mvpd__main{grid-template-columns:1fr;gap:25px}
+ #mvpd-{{ section.id }} .mvpd__viewer{height:auto;aspect-ratio:1/1.08;border-radius:18px}
+ #mvpd-{{ section.id }} .mvpd__gallery{gap:10px}
+ #mvpd-{{ section.id }} .mvpd__thumb{width:58px;height:64px;flex-basis:58px}
+ #mvpd-{{ section.id }} .mvpd__gallery-navigation button{width:36px;height:36px}
+ #mvpd-{{ section.id }} .mvpd__title{font-size:34px;line-height:1.12;max-width:560px}
+ #mvpd-{{ section.id }} .mvpd__subtitle{font-size:13px}
+ #mvpd-{{ section.id }} .mvpd__review{margin-bottom:20px}
+ #mvpd-{{ section.id }} .mvpd__price-area{margin-bottom:23px}
+ #mvpd-{{ section.id }} .mvpd__features{gap:11px}
+ #mvpd-{{ section.id }} .mvpd__features li{font-size:13px}
+ #mvpd-{{ section.id }} .mvpd__field-label{font-size:12px}
+ #mvpd-{{ section.id }} :is(.mvpd__qty input,.mvpd__variant,.mvpd__coupon-fields input){font-size:16px}
+ #mvpd-{{ section.id }} .mvpd__qty button{width:44px}
+ #mvpd-{{ section.id }} .mvpd__qty input{width:48px}
+ #mvpd-{{ section.id }} .mvpd__add{min-height:54px;font-size:14px}
+ #mvpd-{{ section.id }} .mvpd__action-note{font-size:10px}
+ #mvpd-{{ section.id }} .mv-onepack__heading{display:block;margin-bottom:25px}
+ #mvpd-{{ section.id }} .mv-onepack__heading h2{font-size:28px}
+ #mvpd-{{ section.id }} .mv-onepack__heading p{max-width:none;margin-top:10px;font-size:12px}
+ #mvpd-{{ section.id }} .mv-onepack__grid{gap:8px}
+ #mvpd-{{ section.id }} .mv-onepack__card{border-radius:12px;padding:9px}
+ #mvpd-{{ section.id }} .mv-onepack__visual{height:108px;margin-bottom:13px;border-radius:7px}
+ #mvpd-{{ section.id }} .mv-onepack__ribbon{font-size:7px;padding:4px 7px;gap:3px}
+ #mvpd-{{ section.id }} .mv-onepack__qty-label{font-size:16px}
+ #mvpd-{{ section.id }} .mv-onepack__qty-label small{font-size:8px}
+ #mvpd-{{ section.id }} .mv-onepack__unit-price{font-size:8px;line-height:1.5;min-height:24px;margin-bottom:7px}
+ #mvpd-{{ section.id }} .mv-onepack__price{font-size:21px;margin-bottom:12px;overflow-wrap:anywhere}
+ #mvpd-{{ section.id }} .mv-onepack__button{font-size:10px;min-height:44px;padding:7px 3px}
+ #mvpd-{{ section.id }} .mv-onepack__note{font-size:10px;margin-top:16px}
+ #mvpd-{{ section.id }} .mvpd__summary{padding:24px 20px;border-radius:18px}
+ #mvpd-{{ section.id }} .mvpd__summary-title{font-size:25px;margin-bottom:20px}
+ #mvpd-{{ section.id }} .mvpd__summary-product strong{font-size:12px}
+ #mvpd-{{ section.id }} .mvpd__summary-product small{font-size:11px}
+ #mvpd-{{ section.id }} .mvpd__bundle-remove{font-size:10px;min-height:36px}
+ #mvpd-{{ section.id }} .mvpd__sums>div{font-size:12px}
+ #mvpd-{{ section.id }} .mvpd__total-box{padding:18px 15px}
+ #mvpd-{{ section.id }} .mvpd__checkout{font-size:13px;min-height:54px}
+ #mvpd-{{ section.id }} .mvpd__trusts{grid-template-columns:repeat(2,minmax(0,1fr));gap:19px 14px}
+ #mvpd-{{ section.id }} .mvpd__trusts strong{font-size:10px}
+ #mvpd-{{ section.id }} .mvpd__trusts small{font-size:9px}
+ #mvpd-{{ section.id }} .mvpd__summary-note p{font-size:10px}
+ #mvpd-{{ section.id }} .mvpd__summary-note strong{font-size:11px}
+}
+@media(max-width:359px){
+ #mvpd-{{ section.id }}{padding-inline:13px}
+ #mvpd-{{ section.id }} .mvpd__title{font-size:30px}
+ #mvpd-{{ section.id }} .mv-onepack__card{padding:7px}
+ #mvpd-{{ section.id }} .mv-onepack__visual{height:92px}
+ #mvpd-{{ section.id }} .mv-onepack__price{font-size:18px}
+ #mvpd-{{ section.id }} .mv-onepack__qty-label{font-size:15px}
+ #mvpd-{{ section.id }} .mv-onepack__choice-icon{width:14px;height:14px;font-size:8px}
+}
+@media(prefers-reduced-motion:reduce){#mvpd-{{ section.id }} *,#mvpd-{{ section.id }} *::before,#mvpd-{{ section.id }} *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media(forced-colors:active){#mvpd-{{ section.id }} :is(button,input,select){border:1px solid ButtonText}#mvpd-{{ section.id }} .mv-onepack__card.is-summary-selected{outline:2px solid Highlight}}
+</style>
+
+<script>
+(() => {
+  if(window.__MVProductStudio){window.__MVProductStudio.scan(document);return;}
+  const instances=new Map();
+  function initialize(section){
+    if(instances.has(section)||!section.querySelector('.mvpd__form'))return;
+    const configElement=section.querySelector('[data-mvpd-config]');
+    if(!configElement)return;
+    const config=JSON.parse(configElement.textContent);
+    const controller=new AbortController();
+    const listen=(target,type,handler)=>target.addEventListener(type,handler,{signal:controller.signal});
+  const $ = selector => section.querySelector(selector);
+  const $$ = selector => Array.from(section.querySelectorAll(selector));
+  const root = (section.dataset.rootUrl || '/').replace(/\/?$/, '/');
+  const productId = config.productId;
+  const variants = config.variants;
+  const variantSelect = $('[data-mvpd-variant]');
+  const variantHidden = $('[data-mvpd-id]');
+  const qtyInput = $('[data-mvpd-qty]');
+  const checkout = $('[data-mvpd-checkout]');
+  const checkoutLabel = $('[data-mvpd-checkout-label]');
+  const originalCheckoutLabel = config.checkoutLabel;
+  const checkoutLoading = config.loadingLabel;
+  const unitText = config.unitText;
+  const showCompare = config.showCompare;
+  const packs = $$('[data-mv-pack]');
+  const cartList = $('[data-mvpd-live-cart-list]');
+  const cartCheck = $('[data-mvpd-cart-check]');
+  const errorBox = $('[data-mvpd-error]');
+  const cartURL = root + 'cart.js';
+  let cart = null;
+  let busy = false;
+  let loadSerial = 0;
+  let mutationSerial = 0;
+  let needsRefresh = false;
+  const add = $('[data-mvpd-add]');
+  const form = $('.mvpd__form');
+  const formatterCache = new Map();
+  let currency = config.currency;
+
+  function cash(cents) {
+    const locale = document.documentElement.lang || 'tr-TR';
+    const key = locale + ':' + currency + ':' + (Number(cents)%100===0?0:2);
+    try {
+      if (!formatterCache.has(key)) formatterCache.set(key, new Intl.NumberFormat(locale, {style:'currency',currency:currency||'TRY',minimumFractionDigits:Number(cents)%100===0?0:2,maximumFractionDigits:2}));
+      return formatterCache.get(key).format((Number(cents)||0)/100);
+    } catch { return ((Number(cents)||0)/100).toFixed(2); }
+  }
+  function selectedVariant() {
+    return variants.find(v=>String(v.id)===String(variantSelect?.value || variantHidden?.value)) || variants[0];
+  }
+  function set(selector,value) {const el=$(selector);if(el)el.textContent=value;}
+  function visible(selector,on) {const el=$(selector);if(el)el.hidden=!on;}
+  function showError(text) {if(errorBox){errorBox.textContent=text;errorBox.hidden=!text;}}
+  function cartProductLines() {return cart?.items?.filter(item=>Number(item.product_id)===Number(productId) && !item.selling_plan_allocation && !item.parent_relationship && !Object.keys(item.properties||{}).length)||[];}
+  function countProduct() {return cartProductLines().reduce((sum,item)=>sum+item.quantity,0);}
+  function syncHeader(count) {
+    document.querySelectorAll('cart-icon').forEach(icon=>{try{icon.renderCartBubble?.(count,false);}catch(e){}});
+    document.querySelectorAll('.cart-bubble').forEach(el=>{el.classList.toggle('visually-hidden',count===0);const countEl=el.querySelector('.cart-bubble__text-count');if(countEl){countEl.textContent=count<100?String(count):'';countEl.classList.toggle('hidden',count===0);}});
+    try {sessionStorage.setItem('cart-count',JSON.stringify({value:String(count),timestamp:Date.now()}));}catch(e){}
+    document.dispatchEvent(new CustomEvent('mv:cart-updated',{detail:{itemCount:count}}));
+  }
+  function showPreview() {
+    const v=selectedVariant(); if(!v)return;
+    if(variantHidden)variantHidden.value=v.id;
+    set('[data-mvpd-unit]',cash(v.price));
+    set('[data-mvpd-old]',cash(v.compare));visible('[data-mvpd-old]',showCompare && v.compare>v.price);
+    if(qtyInput){qtyInput.min=v.min;qtyInput.step=v.inc;if(v.max)qtyInput.max=v.max;else qtyInput.removeAttribute('max');}
+    const saving = Math.max(0, v.compare - v.price);
+    if (config.manualSaving) set('[data-mvpd-save-amount]', config.manualSaving);
+    else set('[data-mvpd-save-amount]', cash(saving));
+    visible('[data-mvpd-save]', Boolean(config.manualSaving || saving > 0));
+    set('[data-mvpd-add-label]', v.available ? config.addLabel : config.soldLabel);
+    if (add) add.disabled = busy || !v.available;
+    set('[data-mvpd-selected-title]',v.title === 'Default Title' ? '' : v.title);
+
+    packs.forEach(card=>{
+      const qty=Number(card.dataset.qty);
+      const allow=v.available&&qty>=v.min&&(!v.max||qty<=v.max)&&(qty-v.min)%v.inc===0;
+      const btn=card.querySelector('[data-mv-pack-select]');if(btn)btn.disabled=!allow||busy;
+      const total=card.querySelector('[data-mv-pack-price]');if(total)total.textContent=cash(v.price*qty);
+      const unit=card.querySelector('[data-mv-pack-unit]');if(unit)unit.textContent=cash(v.price)+' / '+unitText;
+      const saving=card.querySelector('[data-mv-pack-saving]');if(saving){saving.hidden=true;saving.textContent='';}
+    });
+    if(cart)renderCart(cart);
+  }
+  function itemImage(item) {return item.image||item.featured_image?.url||'';}
+  function makeRow(item){
+    const row=document.createElement('div');row.className='mvpd__summary-item mvpd__real-cart-item';
+    const photo=document.createElement('img');photo.className='mvpd__summary-photo';photo.width=52;photo.height=52;photo.alt='';photo.loading='lazy';
+    if(itemImage(item))photo.src=itemImage(item);else photo.hidden=true;
+    const description=document.createElement('div');description.className='mvpd__summary-product';
+    const name=document.createElement('strong');name.textContent=item.product_title||item.title||'Ürün';
+    const variant=document.createElement('small');variant.textContent=item.variant_title&&item.variant_title!=='Default Title'?item.variant_title:'';
+    const remove=document.createElement('button');remove.className='mvpd__bundle-remove';remove.type='button';remove.dataset.mvRemoveKey=item.key;remove.textContent='Kaldır';remove.setAttribute('aria-label',(item.product_title||item.title||'Ürün')+' ürününü sepetten kaldır');remove.disabled=busy;
+    description.append(name,variant,remove);
+    const price=document.createElement('div');price.className='mvpd__summary-item-price';
+    const quantity=document.createElement('span');quantity.textContent=item.quantity+' '+unitText;
+    const amount=document.createElement('strong');amount.textContent=cash(item.final_line_price??item.line_price??0);
+    price.append(quantity,amount);row.append(photo,description,price);
+    return row;
+  }
+  function renderCart(nextCart){
+    cart=nextCart;currency=nextCart.currency||currency;
+    const selectedCount=countProduct();
+    const productLines=cartProductLines();
+    if(cartList){cartList.replaceChildren(...(nextCart.items||[]).map(makeRow));cartList.hidden=!(nextCart.items||[]).length;}
+    visible('[data-mvpd-base-summary]',false);
+    visible('[data-mvpd-bundle-summary]',false);
+    visible('[data-mvpd-summary-empty]',!(nextCart.items||[]).length);
+    if(cartCheck){cartCheck.hidden=true;}
+    const before=Number(nextCart.original_total_price??nextCart.total_price??0);
+    const total=Number(nextCart.total_price??0);
+    const discount=Math.max(0,before-total);
+    set('[data-mvpd-subtotal]',cash(before));
+    set('[data-mvpd-discount]',discount?'-'+cash(discount):cash(0));
+    visible('[data-mvpd-discount-row]',discount>0);
+    set('[data-mvpd-total]',cash(total));
+    set('[data-mvpd-savings-amount]',cash(discount));
+    visible('[data-mvpd-savings]',discount>0);
+    const v=selectedVariant();
+    packs.forEach(card=>{
+      const qty=Number(card.dataset.qty);
+      const chosen=productLines.length>0 && productLines.every(line=>Number(line.variant_id)===Number(v?.id)) && productLines.reduce((sum,line)=>sum+line.quantity,0)===qty;
+      card.classList.toggle('is-summary-selected',chosen);
+      const btn=card.querySelector('[data-mv-pack-select]');
+      if(btn){btn.setAttribute('aria-pressed',String(chosen));btn.textContent=chosen?'✓ Seçildi':config.packLabel;btn.disabled=busy||!v?.available||qty<v.min||(v.max&&qty>v.max)||(qty-v.min)%v.inc!==0;}
+      const price=card.querySelector('[data-mv-pack-price]');
+      const saving=card.querySelector('[data-mv-pack-saving]');
+      const line=chosen?productLines[0]:null;
+      const net=chosen?productLines.reduce((sum,line)=>sum+Number(line.final_line_price??line.line_price),0):v.price*qty;
+      if(price)price.textContent=cash(net);
+      if(saving){const actual=chosen?Math.max(0,productLines.reduce((sum,line)=>sum+Number(line.original_line_price??line.line_price),0)-net):0;saving.hidden=!actual;saving.textContent=actual?'Shopify indirimi: -'+cash(actual):'';}
+    });
+    if(qtyInput && selectedCount>0 && productLines.every(line=>String(line.variant_id)===String(v?.id)))qtyInput.value=String(selectedCount);
+    if(checkout)checkout.disabled=busy||!nextCart.item_count;
+    syncHeader(Number(nextCart.item_count||0));
+  }
+  async function fetchCart(){const r=await fetch(cartURL,{credentials:'same-origin',cache:'no-store',signal:controller.signal,headers:{Accept:'application/json'}});if(!r.ok)throw new Error('Shopify sepeti okunamadı.');return r.json();}
+  async function postCart(path,data){const r=await fetch(root+path,{method:'POST',credentials:'same-origin',signal:controller.signal,headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(data)});const body=await r.json().catch(()=>({}));if(!r.ok)throw new Error(body.description||body.message||'Shopify sepeti güncellenemedi.');return body;}
+  // Notify Horizon cart components after a successful custom AJAX cart mutation.
+  // Without this the custom summary updates while the native cart drawer stays stale.
+  async function notifyHorizonCart(nextCart, action, sections) {
+    try {
+      const { CartLinesUpdateEvent } = await import('@shopify/events');
+      const deferred = CartLinesUpdateEvent.createPromise();
+      section.dispatchEvent(new CartLinesUpdateEvent({
+        action: action || 'update',
+        context: 'product',
+        lines: (nextCart.items || []).map(item => ({
+          id: String(item.key),
+          merchandiseId: String(item.variant_id),
+          quantity: Number(item.quantity)
+        })),
+        promise: deferred.promise
+      }));
+      deferred.resolve({
+        cart: CartLinesUpdateEvent.createCartFromAjaxResponse(nextCart),
+        detail: {
+          sections: sections || undefined,
+          items: nextCart.items || [],
+          itemCount: Number(nextCart.item_count || 0),
+          productId: String(productId),
+          source: 'mvpd-product-information',
+          didError: false
+        }
+      });
+    } catch (error) {
+      console.warn('[MarketVitrini] Horizon cart notification failed:', error);
+    }
+  }
+  // React to Shopify drawer and native cart quantity changes in both directions.
+  // The native event's promise resolves when the mutation is complete.
+  listen(document,'shopify:cart:lines-update', event => {
+    if (event.target === section || !event.promise) return;
+    event.promise.then(() => {
+      if (!busy) refresh();
+      else needsRefresh=true;
+    }).catch(() => {});
+  });
+  async function refresh(){if(busy||controller.signal.aborted)return;const serial=++loadSerial;try{const fresh=await fetchCart();if(serial===loadSerial){renderCart(fresh);}}catch(e){if(serial===loadSerial&&!controller.signal.aborted){showError(e.message);if(cartCheck){cartCheck.hidden=false;cartCheck.textContent='Sepete ulaşılamıyor';}if(checkout)checkout.disabled=true;}}}
+  function busyUI(value) {
+    busy=value;
+    section.setAttribute('aria-busy',String(value));
+    if(variantSelect)variantSelect.disabled=value;
+    if(qtyInput)qtyInput.disabled=value;
+    if(add)add.disabled=value||!selectedVariant()?.available;
+    $$('[data-mvpd-minus],[data-mvpd-plus],[data-mv-remove-key]').forEach(button=>button.disabled=value);
+    packs.forEach(card=>{const button=card.querySelector('[data-mv-pack-select]');if(button)button.disabled=value;});
+    if(checkout)checkout.disabled=value||!cart?.item_count;
+    if(!value)showPreview();
+  }
+  // This affects only the product on this page; other unrelated cart items remain intact.
+  async function setQuantity(value){
+    const v=selectedVariant();if(!v||busy)return;
+    let qty=Math.max(0,Math.floor(Number(value)||0));
+    if(qty>0&&!v.available){showError('Bu seçenek şu anda stokta yok.');return;}
+    if(qty>0&&(qty<v.min||(v.max&&qty>v.max)||(qty-v.min)%v.inc!==0)){showError('Seçilen adet bu ürünün miktar kurallarıyla uyumlu değil.');return;}
+    const serial=++mutationSerial;
+    loadSerial++;
+    busyUI(true);showError('');
+    if(qtyInput)qtyInput.value=String(qty);
+    if(cartCheck){cartCheck.hidden=false;cartCheck.textContent='Sepet güncelleniyor…';}
+    try{
+      const previous=await fetchCart();
+      const lines=previous.items.filter(item=>Number(item.product_id)===Number(productId) && !item.selling_plan_allocation && !item.parent_relationship && !Object.keys(item.properties||{}).length);
+      const same=lines.length===1&&Number(lines[0].variant_id)===Number(v.id);
+      let updated;
+      const ids=[...new Set([...document.querySelectorAll('cart-items-component[data-section-id]')].map(el=>el.dataset.sectionId).filter(Boolean))].slice(0,5);
+      const withSections={sections:ids,sections_url:window.location.pathname};
+      if(same){
+        updated=lines[0].quantity===qty ? previous : await postCart('cart/change.js',{id:lines[0].key,quantity:qty,...withSections});
+      }else{
+        if(qty>0) await postCart('cart/add.js',{items:[{id:v.id,quantity:qty}],...withSections});
+        if(lines.length){const updates={};lines.forEach(item=>updates[item.key]=0);updated=await postCart('cart/update.js',{updates,...withSections});}
+        else updated=await fetchCart();
+      }
+      // cart/change.js and cart/update.js return authoritative full cart JSON;
+      // cart/add.js returns only added items and needs one follow-up read.
+      const fullCart=Array.isArray(updated?.items)&&Number.isFinite(Number(updated?.total_price)) ? updated : await fetchCart();
+      if(serial!==mutationSerial)return;
+      renderCart(fullCart);
+      await notifyHorizonCart(fullCart,qty>0?'update':'remove',updated?.sections);
+      showError('');
+    }catch(e){if(e.name!=='AbortError'){showError(e.message||'Sepet değiştirilemedi.');try{renderCart(await fetchCart());}catch{}}}
+    finally{busyUI(false);if(cart)renderCart(cart);if(cartCheck)cartCheck.hidden=true;if(needsRefresh){needsRefresh=false;refresh();}}
+  }
+  // Product gallery behavior is independent of package/cart selection.
+  function switchMedia(id){
+    if(!id)return;
+    const all=$$('[data-mvpd-media]');if(!all.some(el=>el.dataset.mvpdMedia===String(id)))return;
+    all.forEach(el=>{const active=el.dataset.mvpdMedia===String(id);el.hidden=!active;el.classList.toggle('is-active',active);if(!active)el.querySelectorAll('video').forEach(video=>video.pause());});
+    $$('[data-mvpd-thumb]').forEach(el=>{const active=el.dataset.mvpdThumb===String(id);el.classList.toggle('is-active',active);el.setAttribute('aria-pressed',String(active));});
+    const index=all.findIndex(el=>el.dataset.mvpdMedia===String(id));set('[data-mvpd-gallery-count]',(index+1)+' / '+all.length);
+  }
+  $$('[data-mvpd-thumb]').forEach(btn=>btn.addEventListener('click',()=>switchMedia(btn.dataset.mvpdThumb)));
+  function nextMedia(direction){const all=$$('[data-mvpd-media]');if(all.length<2)return;const index=all.findIndex(el=>!el.hidden);switchMedia(all[(index+direction+all.length)%all.length].dataset.mvpdMedia);}
+  $('[data-mvpd-prev]')?.addEventListener('click',()=>nextMedia(-1));
+  $('[data-mvpd-next]')?.addEventListener('click',()=>nextMedia(1));
+  $('.mvpd__thumbs')?.addEventListener('keydown',event=>{
+    if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+    const thumbs=$$('[data-mvpd-thumb]');const index=thumbs.indexOf(event.target);if(index<0)return;
+    event.preventDefault();
+    const next=event.key==='Home'?0:event.key==='End'?thumbs.length-1:(index+(event.key==='ArrowRight'?1:-1)+thumbs.length)%thumbs.length;
+    thumbs[next].click();thumbs[next].focus();
+  });
+  const media=$$('[data-mvpd-media]');
+  set('[data-mvpd-gallery-count]','1 / '+Math.max(1,media.length));
+  $$('[data-mvpd-prev],[data-mvpd-next]').forEach(button=>button.disabled=media.length<2);
+
+  $('[data-mvpd-thumb-more]')?.addEventListener('click',()=>{const rail=$('.mvpd__thumbs');if(rail){const vertical=window.matchMedia('(min-width:601px)').matches;rail.scrollBy({top:vertical?140:0,left:vertical?0:170,behavior:'smooth'});}});
+  variantSelect?.addEventListener('change',()=>{if(qtyInput)qtyInput.value=String(selectedVariant()?.min||1);showPreview();const v=selectedVariant();document.dispatchEvent(new CustomEvent('mv:variant-change',{detail:{productId,variant:{id:v.id,price:v.price,compare_at_price:v.compare,available:v.available}}}));switchMedia(v.mediaId);});
+  packs.forEach(card=>card.querySelector('[data-mv-pack-select]')?.addEventListener('click',()=>setQuantity(Number(card.dataset.qty))));
+  $('[data-mvpd-base-restore]')?.addEventListener('click',()=>setQuantity(selectedVariant()?.min||1));
+  function adjust(value){
+    const variant=selectedVariant();if(!variant||busy)return;
+    const raw=Number(value);const min=variant.min||1;const inc=variant.inc||1;
+    let next=Math.max(min,min+Math.round(((Number.isFinite(raw)?raw:min)-min)/inc)*inc);
+    if(variant.max)next=Math.min(next,min+Math.floor((variant.max-min)/inc)*inc);
+    qtyInput.value=String(next);
+    if(cartProductLines().length)setQuantity(next);
+  }
+  qtyInput?.addEventListener('change',()=>adjust(qtyInput.value));
+  $('[data-mvpd-minus]')?.addEventListener('click',()=>adjust(Number(qtyInput?.value)-(selectedVariant()?.inc||1)));
+  $('[data-mvpd-plus]')?.addEventListener('click',()=>adjust(Number(qtyInput?.value)+(selectedVariant()?.inc||1)));
+  form?.addEventListener('submit',async event=>{
+    event.preventDefault();if(busy)return;
+    set('[data-mvpd-add-label]',config.loadingLabel);
+    await setQuantity(Number(qtyInput?.value)||selectedVariant()?.min||1);
+    set('[data-mvpd-add-label]',selectedVariant()?.available?config.addLabel:config.soldLabel);
+  });
+  cartList?.addEventListener('click',async e=>{const remove=e.target.closest('[data-mv-remove-key]');if(!remove||busy)return;busyUI(true);try{await postCart('cart/change.js',{id:remove.dataset.mvRemoveKey,quantity:0});const next=await fetchCart();renderCart(next);await notifyHorizonCart(next,'remove');showError('');}catch(err){if(err.name!=='AbortError')showError(err.message);}finally{busyUI(false);}});
+  $('[data-mvpd-base-remove]')?.addEventListener('click',()=>setQuantity(0));
+  $('[data-mvpd-bundle-remove]')?.addEventListener('click',()=>setQuantity(0));
+  $('[data-mvpd-coupon-apply]')?.addEventListener('click',()=>{const input=$('[data-mvpd-coupon]');const msg=$('[data-mvpd-coupon-info]');if(msg)msg.hidden=!(input&&input.value.trim());});
+  checkout?.addEventListener('click',async()=>{
+    if(busy)return;busyUI(true);if(checkoutLabel)checkoutLabel.textContent=checkoutLoading;
+    try{
+      const fresh=await fetchCart();renderCart(fresh);
+      if(!fresh.item_count)throw new Error('Sepet boş. Önce paket seçin.');
+      const coupon=$('[data-mvpd-coupon]')?.value.trim();
+      const route=section.dataset.next==='cart'?'cart':'checkout';
+      if(coupon)window.location.assign(root+'discount/'+encodeURIComponent(coupon)+'?redirect='+encodeURIComponent(root+route));
+      else window.location.assign(route==='cart'?section.dataset.cartRedirect:section.dataset.checkoutRedirect);
+    }catch(e){showError(e.message);busyUI(false);if(checkoutLabel)checkoutLabel.textContent=originalCheckoutLabel;}
+  });
+  function restore(event){if(event.persisted){busyUI(false);if(checkoutLabel)checkoutLabel.textContent=originalCheckoutLabel;}if(!busy)refresh();}
+  listen(window,'pageshow',restore);
+  listen(window,'focus',()=>{if(!busy)refresh();});
+  listen(document,'visibilitychange',()=>{if(!document.hidden&&!busy)refresh();});
+  showPreview();refresh();
+  return () => controller.abort();
+
+  }
+  function scan(scope){
+    const roots=[...scope.querySelectorAll('[data-mvpd]')];
+    if(scope.matches?.('[data-mvpd]'))roots.unshift(scope);
+    roots.forEach(section=>{if(!instances.has(section)){const cleanup=initialize(section);if(cleanup)instances.set(section,cleanup);}});
+  }
+  document.addEventListener('shopify:section:load',event=>scan(event.target));
+  document.addEventListener('shopify:section:unload',event=>{
+    for(const [section,cleanup] of instances){if(event.target===section||event.target.contains(section)){cleanup();instances.delete(section);}}
+  });
+  window.__MVProductStudio={scan};
+  scan(document);
+})();
+</script>
+
+{% schema %}
+{
+  "name": "MV Product Studio",
+  "tag": "section",
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "bundle",
+      "name": "Paket Kartı",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "enabled",
+          "label": "Kartı göster",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "featured",
+          "label": "Öne çıkan kart",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "qty",
+          "label": "Paket adedi",
+          "min": 1,
+          "max": 10,
+          "step": 1,
+          "default": 1
+        },
+        {
+          "type": "header",
+          "content": "Manuel Fiyatlar"
+        },
+        {
+          "type": "header",
+          "content": "İndirim Balonu"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_discount_badge",
+          "label": "İndirim balonunu göster",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "discount_top",
+          "label": "Balon üst yazısı",
+          "default": "ÖZEL"
+        },
+        {
+          "type": "text",
+          "id": "discount_text",
+          "label": "Balon alt yazısı",
+          "default": "İNDİRİM"
+        },
+        {
+          "type": "header",
+          "content": "Kart Görseli"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Karta özel ürün görseli"
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile_image",
+          "label": "Mobil paket görseli (isteğe bağlı)"
+        },
+        {
+          "type": "select",
+          "id": "image_mode",
+          "label": "Görsel yerleşimi",
+          "options": [
+            {
+              "value": "cover",
+              "label": "Kutuyu tamamen doldur"
+            },
+            {
+              "value": "contain",
+              "label": "Görseli tamamen göster"
+            }
+          ],
+          "default": "cover"
+        },
+        {
+          "type": "header",
+          "content": "Kart Metinleri"
+        },
+        {
+          "type": "text",
+          "id": "top_badge",
+          "label": "Üst rozet",
+          "default": "En Çok Tercih Edilen"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_top_badge",
+          "label": "Öne çıkmasa da üst rozeti göster",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "badge_icon",
+          "label": "Rozet simgesi",
+          "default": "★"
+        },
+        {
+          "type": "text",
+          "id": "feature_1",
+          "label": "Avantaj 1",
+          "default": "1 Adet Ürün"
+        },
+        {
+          "type": "text",
+          "id": "feature_2",
+          "label": "Avantaj 2",
+          "default": "Kolay sipariş"
+        },
+        {
+          "type": "text",
+          "id": "feature_3",
+          "label": "Avantaj 3",
+          "default": "Paket seçeneği"
+        },
+        {
+          "type": "text",
+          "id": "feature_4",
+          "label": "Avantaj 4"
+        },
+        {
+          "type": "header",
+          "content": "Özel Kart Renkleri"
+        },
+        {
+          "type": "color",
+          "id": "accent",
+          "label": "Ana renk",
+          "default": "#6279EF"
+        },
+        {
+          "type": "color",
+          "id": "accent_2",
+          "label": "İkinci renk",
+          "default": "#9DADFF"
+        },
+        {
+          "type": "color",
+          "id": "soft",
+          "label": "Yumuşak renk",
+          "default": "#EDF1FF"
+        }
+      ]
+    }
+  ],
+  "class": "mvpd-shopify-section",
+  "enabled_on": {
+    "templates": [
+      "product"
+    ]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Studio tasarım metinleri"
+    },
+    {
+      "type": "text",
+      "id": "studio_kicker",
+      "label": "Üst küçük başlık",
+      "default": "GÜNLÜK HAYATA İYİ GELEN DETAYLAR"
+    },
+    {
+      "type": "text",
+      "id": "studio_gallery_caption",
+      "label": "Galeri alt açıklaması",
+      "default": "Her açıdan, tüm detaylarıyla."
+    },
+    {
+      "type": "text",
+      "id": "studio_add_label",
+      "label": "Ana sepete ekle butonu",
+      "default": "Sepete ekle"
+    },
+    {
+      "type": "text",
+      "id": "studio_secure_note",
+      "label": "Buton altı güven notu",
+      "default": "Shopify altyapısıyla güvenli alışveriş"
+    },
+    {
+      "type": "text",
+      "id": "studio_summary_kicker",
+      "label": "Özet üst başlığı",
+      "default": "ALIŞVERİŞİNİZ"
+    },
+    {
+      "type": "text",
+      "id": "studio_package_kicker",
+      "label": "Paketler üst etiketi",
+      "default": "SİZE UYGUN SEÇİM"
+    },
+    {
+      "type": "text",
+      "id": "studio_package_heading",
+      "label": "Paketler başlığı",
+      "default": "Birlikte daha güzel."
+    },
+    {
+      "type": "text",
+      "id": "studio_package_text",
+      "label": "Paketler açıklaması",
+      "default": "Kendiniz için bir tane. Sevdikleriniz için biraz daha fazla."
+    },
+    {
+      "type": "text",
+      "id": "studio_package_note",
+      "label": "Paketler alt notu",
+      "default": "Geçerli indirimler sepetinizde gösterilir. Kargo, ödeme adımında hesaplanır."
+    },
+    {
+      "type": "header",
+      "content": "MANUEL SAYILAR - ILK BURADAN DUZENLE"
+    },
+    {
+      "type": "text",
+      "id": "social_proof_text",
+      "label": "10.000+ kisi tercih etti - MANUEL",
+      "info": "Ekranda gorunecek tam metni girin. Sayac otomatik degismez."
+    },
+    {
+      "type": "text",
+      "id": "reference_stock_text",
+      "label": "Sadece 12 adet kaldi - BUYUK YAZI",
+      "info": "Stok uyarisi metni. Sayiyi bu alandan elle degistirin."
+    },
+    {
+      "type": "text",
+      "id": "inventory_info",
+      "label": "Son 24 saatte 421 kisi - KUCUK YAZI",
+      "info": "Ziyaret metni; numara sabittir, yalniz elle degisir."
+    },
+    {
+      "type": "header",
+      "content": "Hazır Referans Metinleri"
+    },
+    {
+      "type": "header",
+      "content": "Ürün bilgileri"
+    },
+    {
+      "type": "paragraph",
+      "content": "Bu bolumde sadece urun adi, fiyati, varyant ve sepet islemleri Shopify verisini kullanir. Diger gorsel/metin/etiket/renkler panelden yonetilir."
+    },
+    {
+      "type": "text",
+      "id": "reference_vendor",
+      "label": "Görseldeki marka"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Ürün alt başlığı (boşsa ürün türü)",
+      "default": "Günlük rutininize özenle seçilmiş bir dokunuş."
+    },
+    {
+      "type": "text",
+      "id": "variant_label",
+      "label": "Varyant seçici başlığı",
+      "default": "Seçenek"
+    },
+    {
+      "type": "textarea",
+      "id": "feature_1",
+      "label": "Ürün özelliği 1",
+      "default": "Her yerde taze smoothie, protein içeceği ve daha fazlası"
+    },
+    {
+      "type": "textarea",
+      "id": "feature_2",
+      "label": "Ürün özelliği 2",
+      "default": "Güçlü motor, buz kırabilen paslanmaz çelik bıçaklar"
+    },
+    {
+      "type": "textarea",
+      "id": "feature_3",
+      "label": "Ürün özelliği 3",
+      "default": "Kablosuz, hafif ve kolay taşınabilir tasarım"
+    },
+    {
+      "type": "textarea",
+      "id": "feature_4",
+      "label": "Ürün özelliği 4",
+      "default": "Tek şarjla 15+ kullanım"
+    },
+    {
+      "type": "textarea",
+      "id": "feature_5",
+      "label": "Ürün özelliği 5",
+      "default": "BPA içermeyen, sağlıklı ve güvenli materyal"
+    },
+    {
+      "type": "textarea",
+      "id": "feature_6",
+      "label": "Ürün özelliği 6",
+      "default": "Spor, ofis, okul, seyahat için ideal"
+    },
+    {
+      "type": "header",
+      "content": "Referans Detay Görünümü"
+    },
+    {
+      "type": "paragraph",
+      "content": "Uzun açıklama yerine 6 özellik görünür. Varsayılan 6 özellik görseldeki metinlerle hazır. İstersen ürün metafield seçeneğini açabilirsin. Doğrulanmamış değerlendirme veya satış rakamı yayınlamayın."
+    },
+    {
+      "type": "text",
+      "id": "verified_rating",
+      "label": "Doğrulanmış değerlendirme puanı",
+      "info": "Yorum metafield verisi yoksa yalnızca gerçek puan girin. Örn: 4.8"
+    },
+    {
+      "type": "text",
+      "id": "verified_reviews_count",
+      "label": "Doğrulanmış değerlendirme sayısı",
+      "info": "Puanla birlikte doldurun; gerçek değerlendirme sayısını kullanın."
+    },
+    {
+      "type": "color",
+      "id": "offer_red",
+      "label": "İndirim vurgu rengi",
+      "default": "#C32635"
+    },
+    {
+      "type": "color",
+      "id": "offer_pink",
+      "label": "İndirim kutusu zemini",
+      "default": "#FAEAEB"
+    },
+    {
+      "type": "color",
+      "id": "trust_gold",
+      "label": "Güvence rozetinde altın vurgu",
+      "default": "#AA8031"
+    },
+    {
+      "type": "color",
+      "id": "rating_star_color",
+      "label": "Yıldız rengi",
+      "default": "#E9A424"
+    },
+    {
+      "type": "color",
+      "id": "feature_check_color",
+      "label": "Özellik onay simgesi",
+      "default": "#E96630"
+    },
+    {
+      "type": "color",
+      "id": "stock_panel_color",
+      "label": "Az stok kutusu rengi",
+      "default": "#F4F2E8"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stock_progress",
+      "label": "Az stokta ilerleme çubuğunu göster",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Sağ sipariş özeti"
+    },
+    {
+      "type": "text",
+      "id": "checkout_label",
+      "label": "Satın alma butonu",
+      "default": "Güvenli ödemeye geç"
+    },
+    {
+      "type": "select",
+      "id": "purchase_destination",
+      "label": "Satın alma sonrası yönlendirme",
+      "options": [
+        {
+          "value": "checkout",
+          "label": "Ödeme sayfası"
+        },
+        {
+          "value": "cart",
+          "label": "Sepet sayfası"
+        }
+      ],
+      "default": "checkout"
+    },
+    {
+      "type": "text",
+      "id": "shipping_note",
+      "label": "Kargo bilgi metni",
+      "default": "Ödemede hesaplanır"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_coupon",
+      "label": "İndirim kodu alanını göster",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust",
+      "label": "Dört güven bilgisini göster",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "trust_1",
+      "label": "Güven mesajı 1",
+      "default": "İade Koşulları"
+    },
+    {
+      "type": "text",
+      "id": "trust_2",
+      "label": "Güven mesajı 2",
+      "default": "Müşteri Desteği"
+    },
+    {
+      "type": "text",
+      "id": "trust_3",
+      "label": "Güven mesajı 3",
+      "default": "Kargo Bilgileri"
+    },
+    {
+      "type": "text",
+      "id": "trust_4",
+      "label": "Güven mesajı 4",
+      "default": "Güvenli Ödeme"
+    },
+    {
+      "type": "textarea",
+      "id": "summary_note",
+      "label": "Sipariş özeti alt notu",
+      "default": "Güvenli ödeme ve destek seçenekleriyle alışverişinizi tamamlayın."
+    },
+    {
+      "type": "header",
+      "content": "Tamamlayıcı ürün"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_upsell",
+      "label": "Ek ürün önerisini göster",
+      "default": true
+    },
+    {
+      "type": "product",
+      "id": "upsell_product",
+      "label": "Önerilecek ürün"
+    },
+    {
+      "type": "text",
+      "id": "upsell_title_override",
+      "label": "Ek ürün kartı başlığı (boşsa ürün adı)"
+    },
+    {
+      "type": "text",
+      "id": "upsell_badge",
+      "label": "Öneri etiketi",
+      "default": "Sizin için önerimiz"
+    },
+    {
+      "type": "image_picker",
+      "id": "upsell_image",
+      "label": "Ek ürün görseli (isteğe bağlı)"
+    },
+    {
+      "type": "text",
+      "id": "upsell_offer_note",
+      "label": "Ek ürün alt kampanya notu",
+      "default": "Bu ürün isteğe bağlı olarak siparişinize eklenir."
+    },
+    {
+      "type": "textarea",
+      "id": "upsell_text",
+      "label": "Ek ürün açıklaması",
+      "default": "Siparişinize ekleyebileceğiniz tamamlayıcı bir ürün."
+    },
+    {
+      "type": "header",
+      "content": "Referans Ürün Görünümü"
+    },
+    {
+      "type": "text",
+      "id": "media_slogan",
+      "label": "Ürün görseli küçük sloganı",
+      "info": "Fotoğrafın sağ üst köşesinde görünür; istemiyorsanız boş bırakın.",
+      "default": "Her Yerde Taze Seninle"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Ana görsel yerleşimi",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Alanı doldur / kırp"
+        },
+        {
+          "value": "contain",
+          "label": "Tamamını göster"
+        }
+      ],
+      "default": "contain"
+    },
+    {
+      "type": "color",
+      "id": "page_background",
+      "label": "Bölüm zemin rengi",
+      "default": "#F5F5F0"
+    },
+    {
+      "type": "header",
+      "content": "Güven alanı alt yazıları"
+    },
+    {
+      "type": "text",
+      "id": "trust_note_1",
+      "label": "Güven 1 küçük açıklama",
+      "default": "İade politikasını inceleyin"
+    },
+    {
+      "type": "text",
+      "id": "trust_note_2",
+      "label": "Güven 2 küçük açıklama",
+      "default": "Sorularınız için yanınızdayız"
+    },
+    {
+      "type": "text",
+      "id": "trust_note_3",
+      "label": "Güven 3 küçük açıklama",
+      "default": "Teslimat detayları"
+    },
+    {
+      "type": "text",
+      "id": "trust_note_4",
+      "label": "Güven 4 küçük açıklama",
+      "default": "Korunan ödeme süreci"
+    },
+    {
+      "type": "text",
+      "id": "summary_note_title",
+      "label": "Altın bilgilendirme kutusu başlığı",
+      "default": "Müşteri Memnuniyeti"
+    },
+    {
+      "type": "header",
+      "content": "Ek Ürün Avantajları"
+    },
+    {
+      "type": "text",
+      "id": "upsell_feature_1",
+      "label": "Tamamlayıcı özellik 1",
+      "default": "Siparişinize ekleyin"
+    },
+    {
+      "type": "text",
+      "id": "upsell_feature_2",
+      "label": "Tamamlayıcı özellik 2",
+      "default": "Ürün detaylarını keşfedin"
+    },
+    {
+      "type": "text",
+      "id": "upsell_feature_3",
+      "label": "Tamamlayıcı özellik 3",
+      "default": "Kolay seçim"
+    },
+    {
+      "type": "text",
+      "id": "upsell_feature_4",
+      "label": "Tamamlayıcı özellik 4",
+      "default": "Aynı alışverişte"
+    },
+    {
+      "type": "header",
+      "content": "Tasarım ve renkler"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Sayfa genişliği",
+      "min": 1080,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1440
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Kart köşe yuvarlaklığı",
+      "min": 8,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "default": 22
+    },
+    {
+      "type": "color",
+      "id": "card_color",
+      "label": "Kart arka planı",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "soft_color",
+      "label": "Görsel arka planı",
+      "default": "#F0F1EA"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Çerçeve rengi",
+      "default": "#DDE2DA"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Başlık rengi",
+      "default": "#202C2A"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "İkincil yazılar",
+      "default": "#626D68"
+    },
+    {
+      "type": "color",
+      "id": "accent",
+      "label": "Buton başlangıç rengi",
+      "default": "#1D5146"
+    },
+    {
+      "type": "color",
+      "id": "accent_dark",
+      "label": "Buton bitiş rengi",
+      "default": "#153F36"
+    },
+    {
+      "type": "header",
+      "content": "Manuel metin ve galeri"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Manuel markayı göster",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_subtitle",
+      "label": "Alt açıklamayı göster",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_media_slogan",
+      "label": "Görsel üstü slogan göster",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "use_manual_gallery",
+      "label": "Manuel görsel galerisi kullan",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "gallery_image_1",
+      "label": "Manuel görsel 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "gallery_image_2",
+      "label": "Manuel görsel 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "gallery_image_3",
+      "label": "Manuel görsel 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "gallery_image_4",
+      "label": "Manuel görsel 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "gallery_image_5",
+      "label": "Manuel görsel 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "gallery_image_6",
+      "label": "Manuel görsel 6"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_features",
+      "label": "Altı ürün özelliğini göster",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "feature_icon",
+      "label": "Özelliklerin ikon simgesi",
+      "default": "✓"
+    },
+    {
+      "type": "header",
+      "content": "Yorum ve kanıt mesajı"
+    },
+    {
+      "type": "text",
+      "id": "manual_stars",
+      "label": "Yıldız simgeleri",
+      "default": "★★★★★"
+    },
+    {
+      "type": "text",
+      "id": "review_count_label",
+      "label": "Yorum sayısı eki",
+      "default": "değerlendirme"
+    },
+    {
+      "type": "text",
+      "id": "social_proof_icon",
+      "label": "Tercih etiketi simgesi",
+      "default": "✦"
+    },
+    {
+      "type": "header",
+      "content": "Manuel promosyon görünümü"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_gallery_badge",
+      "label": "Fotoğraf köşesi rozetini göster",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "gallery_badge_text",
+      "label": "Fotoğraf rozeti yazısı",
+      "default": "Özenle seçildi"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_compare_price",
+      "label": "Eski Shopify fiyatını göster",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price_badge",
+      "label": "Fiyat yanındaki rozeti göster",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "price_badge_text",
+      "label": "Fiyat yanındaki rozet",
+      "default": "Avantajlı Fiyat"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_savings_box",
+      "label": "Fiyat yanında bilgi kutusu",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "savings_label",
+      "label": "Kazanç kutusu alt yazısı",
+      "default": "Kazancın var!"
+    },
+    {
+      "type": "text",
+      "id": "savings_value",
+      "label": "Kazanç kutusunda manuel değer"
+    },
+    {
+      "type": "text",
+      "id": "discount_label",
+      "label": "Gerçek indirim etiketi",
+      "default": "İNDİRİM"
+    },
+    {
+      "type": "header",
+      "content": "Manuel stok bilgilendirme"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stock_panel",
+      "label": "Stok / bilgilendirme alanı",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "stock_icon",
+      "label": "Bilgi kutusu simgesi",
+      "default": "✦"
+    },
+    {
+      "type": "range",
+      "id": "manual_stock_progress",
+      "label": "Bilgi çubuğu doluluk",
+      "default": 65,
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%"
+    },
+    {
+      "type": "header",
+      "content": "Sağ özet manuel yazıları"
+    },
+    {
+      "type": "text",
+      "id": "summary_heading",
+      "label": "Özet başlığı",
+      "default": "Sipariş Özeti"
+    },
+    {
+      "type": "text",
+      "id": "subtotal_label",
+      "label": "Ara toplam yazısı",
+      "default": "Ara Toplam"
+    },
+    {
+      "type": "text",
+      "id": "discount_row_label",
+      "label": "İndirim satırı yazısı",
+      "default": "İndirim"
+    },
+    {
+      "type": "text",
+      "id": "shipping_label",
+      "label": "Kargo satırı yazısı",
+      "default": "Kargo"
+    },
+    {
+      "type": "text",
+      "id": "total_label",
+      "label": "Toplam satırı yazısı",
+      "default": "Toplam Tutar"
+    },
+    {
+      "type": "text",
+      "id": "quantity_unit",
+      "label": "Adet birimi",
+      "default": "adet"
+    },
+    {
+      "type": "text",
+      "id": "quantity_label",
+      "label": "Adet seçici başlığı",
+      "default": "Adet"
+    },
+    {
+      "type": "text",
+      "id": "variant_sold_out_label",
+      "label": "Stok dışı varyant yazısı",
+      "default": "Tükendi"
+    },
+    {
+      "type": "text",
+      "id": "coupon_label",
+      "label": "Kupon başlığı",
+      "default": "İndirim kodu"
+    },
+    {
+      "type": "text",
+      "id": "coupon_placeholder",
+      "label": "Kupon alanı yazısı",
+      "default": "Kupon kodunuzu girin"
+    },
+    {
+      "type": "text",
+      "id": "coupon_button_label",
+      "label": "Kupon butonu",
+      "default": "Uygula"
+    },
+    {
+      "type": "text",
+      "id": "coupon_info",
+      "label": "Kupon bilgilendirmesi",
+      "default": "Kod ödeme sayfasında doğrulanır"
+    },
+    {
+      "type": "text",
+      "id": "upsell_summary_label",
+      "label": "Ek ürün özet alt yazısı",
+      "default": "Ek ürün"
+    },
+    {
+      "type": "text",
+      "id": "upsell_button_label",
+      "label": "Ek ürün ekle yazısı",
+      "default": "Evet, ekle"
+    },
+    {
+      "type": "text",
+      "id": "upsell_selected_label",
+      "label": "Ek ürün seçili yazısı",
+      "default": "Seçildi"
+    },
+    {
+      "type": "header",
+      "content": "Güven kartı simgeleri"
+    },
+    {
+      "type": "text",
+      "id": "trust_icon_1",
+      "label": "Güven ikonu 1",
+      "default": "↩"
+    },
+    {
+      "type": "text",
+      "id": "trust_icon_2",
+      "label": "Güven ikonu 2",
+      "default": "✓"
+    },
+    {
+      "type": "text",
+      "id": "trust_icon_3",
+      "label": "Güven ikonu 3",
+      "default": "🚚"
+    },
+    {
+      "type": "text",
+      "id": "trust_icon_4",
+      "label": "Güven ikonu 4",
+      "default": "▤"
+    },
+    {
+      "type": "text",
+      "id": "satisfaction_icon_custom",
+      "label": "Memnuniyet simgesi (boş=rozet)"
+    },
+    {
+      "type": "header",
+      "content": "Manuel ödeme görselleri"
+    },
+    {
+      "type": "image_picker",
+      "id": "payment_image_1",
+      "label": "Ödeme logosu 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "payment_image_2",
+      "label": "Ödeme logosu 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "payment_image_3",
+      "label": "Ödeme logosu 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "payment_image_4",
+      "label": "Ödeme logosu 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "payment_image_5",
+      "label": "Ödeme logosu 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "payment_image_6",
+      "label": "Ödeme logosu 6"
+    },
+    {
+      "type": "header",
+      "content": "Tasarım renkleri PRO"
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Fiyat yazı rengi",
+      "default": "#202C2A"
+    },
+    {
+      "type": "color",
+      "id": "gallery_badge_color",
+      "label": "Fotoğraf rozeti arka planı",
+      "default": "#C92332"
+    },
+    {
+      "type": "color",
+      "id": "gallery_badge_text_color",
+      "label": "Fotoğraf rozeti yazısı",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "feature_text_color",
+      "label": "Özellik yazı rengi",
+      "default": "#3C4750"
+    },
+    {
+      "type": "color",
+      "id": "review_text_color",
+      "label": "Yorum rakamları rengi",
+      "default": "#1F252C"
+    },
+    {
+      "type": "color",
+      "id": "social_bg_color",
+      "label": "Tercih etiketi zemini",
+      "default": "#EEF3EC"
+    },
+    {
+      "type": "color",
+      "id": "social_text_color",
+      "label": "Tercih etiketi yazısı",
+      "default": "#315D45"
+    },
+    {
+      "type": "color",
+      "id": "price_badge_color",
+      "label": "Fiyat rozeti zemini",
+      "default": "#E8EFE7"
+    },
+    {
+      "type": "color",
+      "id": "price_badge_text_color",
+      "label": "Fiyat rozeti yazısı",
+      "default": "#245442"
+    },
+    {
+      "type": "color",
+      "id": "stock_text_color",
+      "label": "Bilgi kutusu yazısı",
+      "default": "#6A5933"
+    },
+    {
+      "type": "color",
+      "id": "stock_bar_track_color",
+      "label": "Çubuk arka planı",
+      "default": "#ECCBD0"
+    },
+    {
+      "type": "color",
+      "id": "stock_bar_color",
+      "label": "Çubuk doluluk rengi",
+      "default": "#C32635"
+    },
+    {
+      "type": "color",
+      "id": "summary_bg_color",
+      "label": "Sipariş özeti arka planı",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "total_panel_bg",
+      "label": "Toplam kutusu zemini",
+      "default": "#F0F3EC"
+    },
+    {
+      "type": "color",
+      "id": "trust_icon_color",
+      "label": "Güven simgesi rengi",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "trust_icon_bg",
+      "label": "Güven simgesi zemini",
+      "default": "#F7F7F5"
+    },
+    {
+      "type": "color",
+      "id": "satisfaction_panel_bg",
+      "label": "Memnuniyet kutusu zemini",
+      "default": "#F6F4EB"
+    },
+    {
+      "type": "color",
+      "id": "satisfaction_text_color",
+      "label": "Memnuniyet yazı rengi",
+      "default": "#625B43"
+    },
+    {
+      "type": "color",
+      "id": "upsell_panel_bg",
+      "label": "Ek ürün kart zemini",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "upsell_btn_color",
+      "label": "Ek ürün buton rengi",
+      "default": "#45943B"
+    },
+    {
+      "type": "color",
+      "id": "upsell_btn_text_color",
+      "label": "Ek ürün buton yazısı",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "upsell_badge_color",
+      "label": "Ek ürün üst rozet rengi",
+      "default": "#D83D32"
+    },
+    {
+      "type": "color",
+      "id": "payment_bg_color",
+      "label": "Ödeme ikon alanı zemini",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_upsell_offer_badge",
+      "label": "Ek ürün etiketini göster",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "upsell_offer_badge",
+      "label": "Ek ürün indirim etiket metni",
+      "default": "Özel Seçim"
+    },
+    {
+      "type": "text",
+      "id": "upsell_feature_icon",
+      "label": "Ek ürün özellik ikonu",
+      "default": "✓"
+    },
+    {
+      "type": "color",
+      "id": "coupon_button_bg",
+      "label": "Kupon butonu arka planı",
+      "default": "#4C7458"
+    },
+    {
+      "type": "color",
+      "id": "coupon_button_text",
+      "label": "Kupon butonu yazısı",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_text_color",
+      "label": "Alt açıklama yazısı",
+      "default": "#59645B"
+    },
+    {
+      "type": "color",
+      "id": "upsell_note_bg",
+      "label": "Ek ürün notu zemini",
+      "default": "#FFF0F0"
+    },
+    {
+      "type": "color",
+      "id": "upsell_note_text",
+      "label": "Ek ürün notu yazısı",
+      "default": "#C3262D"
+    },
+    {
+      "type": "color",
+      "id": "quantity_bg",
+      "label": "Adet seçici arka planı",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "quantity_text",
+      "label": "Adet seçici yazı rengi",
+      "default": "#202C2A"
+    },
+    {
+      "type": "color",
+      "id": "product_image_bg",
+      "label": "Büyük görsel arka planı",
+      "default": "#ECEEE5"
+    },
+    {
+      "type": "header",
+      "content": "Tek tek alan görünürlüğü"
+    },
+    {
+      "type": "text",
+      "id": "loading_button_label",
+      "label": "Sepet işlem metni",
+      "default": "Sepete ekleniyor..."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_satisfaction",
+      "label": "Memnuniyet kutusunu göster",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_1",
+      "label": "Güven kartı 1 göster",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_2",
+      "label": "Güven kartı 2 göster",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_3",
+      "label": "Güven kartı 3 göster",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust_4",
+      "label": "Güven kartı 4 göster",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "V9.2 Sosyal kanıt ve ziyaretçi"
+    },
+    {
+      "type": "checkbox",
+      "id": "mv_show_social_banner",
+      "label": "Tercih mesajını göster",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "mv_show_visitor_banner",
+      "label": "Ziyaretçi mesajını göster",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "mv_visitor_icon",
+      "label": "Ziyaretçi mesajı simgesi",
+      "default": "◉"
+    },
+    {
+      "type": "color",
+      "id": "mv_visitor_bg_color",
+      "label": "Ziyaretçi kutusu zemini",
+      "default": "#FFF5F2"
+    },
+    {
+      "type": "color",
+      "id": "mv_visitor_text_color",
+      "label": "Ziyaretçi metni rengi",
+      "default": "#A64029"
+    },
+    {
+      "type": "color",
+      "id": "mv_visitor_border_color",
+      "label": "Ziyaretçi kutusu kenarı",
+      "default": "#F1DDD8"
+    },
+    {
+      "type": "color",
+      "id": "mv_visitor_icon_color",
+      "label": "Ziyaretçi simgesi rengi",
+      "default": "#CA4C33"
+    },
+    {
+      "type": "color",
+      "id": "mv_social_icon_color",
+      "label": "Tercih simgesi rengi",
+      "default": "#B62830"
+    },
+    {
+      "type": "range",
+      "id": "mv_visitor_font_size",
+      "label": "Ziyaret yazı boyutu",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mv_info_radius",
+      "label": "Ziyaret kutusu köşesi",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "default": 8,
+      "unit": "px"
+    },
+    {
+      "type": "paragraph",
+      "content": "Tercih ve ziyaret sayıları manuel tanıtım bilgileridir. Yayımlamadan önce verilerin doğruluğunu kontrol edin."
+    },
+    {
+      "type": "header",
+      "content": "V9.2 Toplam kazanç etiketi"
+    },
+    {
+      "type": "checkbox",
+      "id": "mv_show_total_savings",
+      "label": "Toplam altında kazanç göster",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "mv_manual_total_savings",
+      "label": "Elle toplam kazanç tutarı (isteğe bağlı)"
+    },
+    {
+      "type": "text",
+      "id": "mv_total_fallback_text",
+      "label": "İndirim yoksa avantaj mesajı"
+    },
+    {
+      "type": "text",
+      "id": "mv_total_savings_icon",
+      "label": "Toplam kazanç simgesi",
+      "default": "✦"
+    },
+    {
+      "type": "color",
+      "id": "mv_total_savings_bg",
+      "label": "Toplam kazanç kutusu zemini",
+      "default": "#FBE7E8"
+    },
+    {
+      "type": "color",
+      "id": "mv_total_savings_text",
+      "label": "Toplam kazanç yazı rengi",
+      "default": "#B52230"
+    },
+    {
+      "type": "range",
+      "id": "mv_total_savings_font",
+      "label": "Toplam kazanç yazı boyutu",
+      "min": 9,
+      "max": 16,
+      "step": 1,
+      "default": 11,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mv_total_savings_padding",
+      "label": "Toplam kazanç iç boşluk",
+      "min": 2,
+      "max": 14,
+      "step": 1,
+      "default": 5,
+      "unit": "px"
+    },
+    {
+      "type": "paragraph",
+      "content": "Elle girilen kazanç metni görseldir; Shopify tahsilatını değiştirmez. Gerçek fiyat ve kampanya bilgisiyle tutarlı girin."
+    },
+    {
+      "type": "header",
+      "content": "V9.2 Ödeme görsel ölçüleri"
+    },
+    {
+      "type": "checkbox",
+      "id": "mv_show_payment_area",
+      "label": "Ödeme logosu alanını göster",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "mv_payment_width",
+      "label": "Ödeme logosu genişliği",
+      "min": 46,
+      "max": 126,
+      "step": 2,
+      "default": 82,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mv_payment_height",
+      "label": "Ödeme logosu yüksekliği",
+      "min": 28,
+      "max": 74,
+      "step": 2,
+      "default": 46,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mv_payment_gap",
+      "label": "Ödeme logoları aralığı",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 10,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "mv_payment_padding",
+      "label": "Ödeme alanı iç boşluğu",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "mv_payment_border_color",
+      "label": "Ödeme alanı çizgi rengi",
+      "default": "#E7E9EC"
+    },
+    {
+      "type": "header",
+      "content": "V9.2 Güven ve diğer renkler"
+    },
+    {
+      "type": "checkbox",
+      "id": "mv_trust_svg_icons",
+      "label": "Tek renkli profesyonel güven ikonları",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "mv_trust_icon_size",
+      "label": "Güven ikonu boyutu",
+      "min": 16,
+      "max": 40,
+      "step": 1,
+      "default": 26,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "mv_trust_title_color",
+      "label": "Güven kartı başlığı",
+      "default": "#22272D"
+    },
+    {
+      "type": "color",
+      "id": "mv_trust_note_color",
+      "label": "Güven kartı alt metin",
+      "default": "#626D68"
+    },
+    {
+      "type": "color",
+      "id": "mv_feature_icon_bg",
+      "label": "Ürün özellik simgesi zemini",
+      "default": "#EEF3EC"
+    },
+    {
+      "type": "color",
+      "id": "mv_feature_icon_color",
+      "label": "Ürün özellik simgesi iç rengi",
+      "default": "#315D45"
+    },
+    {
+      "type": "color",
+      "id": "mv_old_price_color",
+      "label": "Üstü çizili fiyat rengi",
+      "default": "#626B60"
+    },
+    {
+      "type": "color",
+      "id": "mv_summary_heading_color",
+      "label": "Sipariş başlığı rengi",
+      "default": "#22272D"
+    },
+    {
+      "type": "color",
+      "id": "mv_summary_label_color",
+      "label": "Sipariş ara başlıkları rengi",
+      "default": "#4B5152"
+    },
+    {
+      "type": "color",
+      "id": "mv_summary_value_color",
+      "label": "Sipariş ara tutar rengi",
+      "default": "#4B5152"
+    },
+    {
+      "type": "color",
+      "id": "mv_discount_text_color",
+      "label": "İndirim satırı rengi",
+      "default": "#2B6645"
+    },
+    {
+      "type": "color",
+      "id": "mv_total_label_color",
+      "label": "Toplam Tutar başlığı rengi",
+      "default": "#24272E"
+    },
+    {
+      "type": "color",
+      "id": "mv_checkout_text_color",
+      "label": "Satın al butonu yazı rengi",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "mv_selected_thumb_border",
+      "label": "Seçili görsel çerçeve rengi",
+      "default": "#1D5146"
+    },
+    {
+      "type": "color",
+      "id": "mv_upsell_badge_text",
+      "label": "Ek ürün rozet yazısı",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "mv_upsell_title_color",
+      "label": "Ek ürün başlığı rengi",
+      "default": "#24272E"
+    },
+    {
+      "type": "color",
+      "id": "mv_upsell_description_color",
+      "label": "Ek ürün açıklaması rengi",
+      "default": "#69727B"
+    },
+    {
+      "type": "checkbox",
+      "id": "mv_show_rating_bar",
+      "label": "Manuel yıldız, puan ve yorum satırı",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "mv_trust_black_color",
+      "label": "Güven SVG simgeleri rengi",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "mv_gallery_thumb_bg",
+      "label": "Küçük görsellerin zemini",
+      "default": "#F3F4F2"
+    },
+    {
+      "type": "color",
+      "id": "mv_input_label_color",
+      "label": "Adet ve varyant etiket rengi",
+      "default": "#33483D"
+    },
+    {
+      "type": "color",
+      "id": "mv_qty_border_color",
+      "label": "Adet kutusu kenar rengi",
+      "default": "#E2E5E7"
+    },
+    {
+      "type": "color",
+      "id": "mv_qty_button_bg",
+      "label": "Adet butonu arka planı",
+      "default": "#F3F5F0"
+    },
+    {
+      "type": "color",
+      "id": "mv_qty_button_text",
+      "label": "Adet butonu simge rengi",
+      "default": "#1D2920"
+    },
+    {
+      "type": "color",
+      "id": "mv_upsell_feature_color",
+      "label": "Ek ürün özellik metin rengi",
+      "default": "#6C7770"
+    },
+    {
+      "type": "color",
+      "id": "mv_summary_divider_color",
+      "label": "Özet ayırıcı çizgi rengi",
+      "default": "#E7E9E6"
+    },
+    {
+      "type": "checkbox",
+      "id": "mv_show_installments",
+      "label": "Taksit seçeneklerini göster",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "mv_installments_title",
+      "label": "Taksit başlığı",
+      "default": "Taksit Seçenekleri"
+    },
+    {
+      "type": "text",
+      "id": "mv_installments_subtitle",
+      "label": "Taksit açıklaması",
+      "default": "Tüm kredi kartlarına 3, 6 veya 9 taksit imkanı!"
+    },
+    {
+      "type": "image_picker",
+      "id": "mv_installment_image_1",
+      "label": "Taksit logo 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "mv_installment_image_2",
+      "label": "Taksit logo 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "mv_installment_image_3",
+      "label": "Taksit logo 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "mv_installment_image_4",
+      "label": "Taksit logo 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "mv_installment_image_5",
+      "label": "Taksit logo 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "mv_installment_image_6",
+      "label": "Taksit logo 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "mv_installment_image_7",
+      "label": "Taksit logo 7"
+    },
+    {
+      "type": "image_picker",
+      "id": "mv_installment_image_8",
+      "label": "Taksit logo 8"
+    },
+    {
+      "type": "text",
+      "id": "mv_b16_button_text",
+      "label": "Paket seçimi buton yazısı",
+      "default": "Sepete Ekle"
+    },
+    {
+      "type": "select",
+      "id": "mv_b16_palette",
+      "label": "Renk kombinasyonu",
+      "options": [
+        {
+          "value": "royal",
+          "label": "Kraliyet Moru"
+        },
+        {
+          "value": "ocean",
+          "label": "Okyanus Mavisi"
+        },
+        {
+          "value": "emerald",
+          "label": "Zümrüt"
+        },
+        {
+          "value": "cream",
+          "label": "Altın Krem"
+        },
+        {
+          "value": "ruby",
+          "label": "Yakut Kırmızısı"
+        },
+        {
+          "value": "navy",
+          "label": "Gece Lacivert"
+        },
+        {
+          "value": "rose",
+          "label": "Rose Gold"
+        },
+        {
+          "value": "energy",
+          "label": "Turuncu Enerji"
+        },
+        {
+          "value": "blackgold",
+          "label": "Siyah Altın"
+        },
+        {
+          "value": "mint",
+          "label": "Mint Lavanta"
+        },
+        {
+          "value": "custom",
+          "label": "Özel Kart Renkleri"
+        }
+      ],
+      "default": "royal"
+    },
+    {
+      "type": "color",
+      "id": "mv_b16_bg",
+      "label": "Bölüm arka planı",
+      "default": "#F8F9FD"
+    },
+    {
+      "type": "color",
+      "id": "mv_b16_featured_bg",
+      "label": "Öne çıkan kart zemini",
+      "default": "#F5F0FF"
+    },
+    {
+      "type": "color",
+      "id": "mv_b16_featured_border",
+      "label": "Öne çıkan kart kenarlığı",
+      "default": "#7856D8"
+    },
+    {
+      "type": "text",
+      "id": "mv_b16_featured_badge_fallback",
+      "label": "Otomatik paket orta rozet",
+      "default": "Öne çıkan paket"
+    },
+    {
+      "type": "range",
+      "id": "mv_pack_discount_2",
+      "label": "Shopify 2 adet hedef indirim",
+      "default": 5,
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "%"
+    },
+    {
+      "type": "range",
+      "id": "mv_pack_discount_3",
+      "label": "Shopify 3 adet hedef indirim",
+      "default": 10,
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "%"
+    }
+  ],
+  "presets": [
+    {
+      "name": "MV Product Studio",
+      "blocks": [
+        {
+          "type": "bundle",
+          "settings": {
+            "qty": 1,
+            "enabled": true,
+            "top_badge": "Tekli",
+            "accent": "#1D5146",
+            "soft": "#F0F3EC"
+          }
+        },
+        {
+          "type": "bundle",
+          "settings": {
+            "qty": 2,
+            "enabled": true,
+            "featured": true,
+            "top_badge": "Öne çıkan paket",
+            "accent": "#1D5146",
+            "soft": "#F0F3EC"
+          }
+        },
+        {
+          "type": "bundle",
+          "settings": {
+            "qty": 3,
+            "enabled": true,
+            "top_badge": "Çoklu Avantaj",
+            "accent": "#1D5146",
+            "soft": "#F0F3EC"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
