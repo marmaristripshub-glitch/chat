@@ -1,0 +1,1252 @@
+{
+  "inventory": {
+    "sections": [
+      {
+        "name": "_blocks.liquid",
+        "settings": 33,
+        "blocks": 3
+      },
+      {
+        "name": "carousel.liquid",
+        "settings": 11,
+        "blocks": 0
+      },
+      {
+        "name": "cart-drawer-section.liquid",
+        "settings": 0,
+        "blocks": 0
+      },
+      {
+        "name": "collection-links.liquid",
+        "settings": 10,
+        "blocks": 0
+      },
+      {
+        "name": "collection-list.liquid",
+        "settings": 21,
+        "blocks": 10
+      },
+      {
+        "name": "custom-liquid.liquid",
+        "settings": 6,
+        "blocks": 0
+      },
+      {
+        "name": "divider.liquid",
+        "settings": 10,
+        "blocks": 0
+      },
+      {
+        "name": "featured-blog-posts.liquid",
+        "settings": 20,
+        "blocks": 3
+      },
+      {
+        "name": "featured-product-information.liquid",
+        "settings": 11,
+        "blocks": 2
+      },
+      {
+        "name": "featured-product.liquid",
+        "settings": 6,
+        "blocks": 0
+      },
+      {
+        "name": "footer-utilities.liquid",
+        "settings": 8,
+        "blocks": 3
+      },
+      {
+        "name": "footer.liquid",
+        "settings": 142,
+        "blocks": 1
+      },
+      {
+        "name": "header-announcements.liquid",
+        "settings": 9,
+        "blocks": 1
+      },
+      {
+        "name": "header.liquid",
+        "settings": 92,
+        "blocks": 0
+      },
+      {
+        "name": "hero.liquid",
+        "settings": 45,
+        "blocks": 8
+      },
+      {
+        "name": "layered-slideshow.liquid",
+        "settings": 9,
+        "blocks": 1
+      },
+      {
+        "name": "logo.liquid",
+        "settings": 19,
+        "blocks": 0
+      },
+      {
+        "name": "main-404.liquid",
+        "settings": 11,
+        "blocks": 3
+      },
+      {
+        "name": "main-blog-post.liquid",
+        "settings": 6,
+        "blocks": 6
+      },
+      {
+        "name": "main-blog.liquid",
+        "settings": 4,
+        "blocks": 10
+      },
+      {
+        "name": "main-cart.liquid",
+        "settings": 15,
+        "blocks": 9
+      },
+      {
+        "name": "main-collection-list.liquid",
+        "settings": 19,
+        "blocks": 10
+      },
+      {
+        "name": "main-collection.liquid",
+        "settings": 16,
+        "blocks": 0
+      },
+      {
+        "name": "main-page.liquid",
+        "settings": 6,
+        "blocks": 3
+      },
+      {
+        "name": "marquee.liquid",
+        "settings": 6,
+        "blocks": 4
+      },
+      {
+        "name": "media-with-content.liquid",
+        "settings": 9,
+        "blocks": 0
+      },
+      {
+        "name": "mv-announcement.liquid",
+        "settings": 4,
+        "blocks": 1
+      },
+      {
+        "name": "mv-before-after.liquid",
+        "settings": 76,
+        "blocks": 0
+      },
+      {
+        "name": "mv-benefits.liquid",
+        "settings": 44,
+        "blocks": 1
+      },
+      {
+        "name": "mv-box-contents-pro.liquid",
+        "settings": 21,
+        "blocks": 1
+      },
+      {
+        "name": "mv-bundle-pro.liquid",
+        "settings": 13,
+        "blocks": 1
+      },
+      {
+        "name": "mv-bundle.liquid",
+        "settings": 57,
+        "blocks": 1
+      },
+      {
+        "name": "mv-comparison.liquid",
+        "settings": 46,
+        "blocks": 2
+      },
+      {
+        "name": "mv-dual-promo.liquid",
+        "settings": 12,
+        "blocks": 0
+      },
+      {
+        "name": "mv-faq-final-duo.liquid",
+        "settings": 12,
+        "blocks": 1
+      },
+      {
+        "name": "mv-faq.liquid",
+        "settings": 9,
+        "blocks": 1
+      },
+      {
+        "name": "mv-feature-pill-strip.liquid",
+        "settings": 20,
+        "blocks": 1
+      },
+      {
+        "name": "mv-final-cta.liquid",
+        "settings": 97,
+        "blocks": 0
+      },
+      {
+        "name": "mv-final-sale-cta-pro.liquid",
+        "settings": 33,
+        "blocks": 1
+      },
+      {
+        "name": "mv-guarantee-grid.liquid",
+        "settings": 12,
+        "blocks": 1
+      },
+      {
+        "name": "mv-howto.liquid",
+        "settings": 21,
+        "blocks": 1
+      },
+      {
+        "name": "mv-image-banner.liquid",
+        "settings": 18,
+        "blocks": 0
+      },
+      {
+        "name": "mv-lifestyle-cta-banner.liquid",
+        "settings": 78,
+        "blocks": 1
+      },
+      {
+        "name": "mv-lifestyle-gallery.liquid",
+        "settings": 8,
+        "blocks": 1
+      },
+      {
+        "name": "mv-live-campaign.liquid",
+        "settings": 14,
+        "blocks": 0
+      },
+      {
+        "name": "mv-logo-strip.liquid",
+        "settings": 11,
+        "blocks": 1
+      },
+      {
+        "name": "mv-loox-pro.liquid",
+        "settings": 25,
+        "blocks": 2
+      },
+      {
+        "name": "mv-loox-reviews.liquid",
+        "settings": 21,
+        "blocks": 1
+      },
+      {
+        "name": "mv-marquee-pro.liquid",
+        "settings": 13,
+        "blocks": 1
+      },
+      {
+        "name": "mv-media-icons.liquid",
+        "settings": 48,
+        "blocks": 1
+      },
+      {
+        "name": "mv-minimal-cta-bar.liquid",
+        "settings": 36,
+        "blocks": 0
+      },
+      {
+        "name": "mv-newsletter-footer.liquid",
+        "settings": 12,
+        "blocks": 0
+      },
+      {
+        "name": "mv-offer-banner.liquid",
+        "settings": 54,
+        "blocks": 0
+      },
+      {
+        "name": "mv-offer-guarantee.liquid",
+        "settings": 12,
+        "blocks": 1
+      },
+      {
+        "name": "mv-premium-product-cta.liquid",
+        "settings": 56,
+        "blocks": 1
+      },
+      {
+        "name": "mv-premium-trust-strip.liquid",
+        "settings": 4,
+        "blocks": 1
+      },
+      {
+        "name": "mv-problem-solution.liquid",
+        "settings": 43,
+        "blocks": 1
+      },
+      {
+        "name": "mv-product-hero.liquid",
+        "settings": 27,
+        "blocks": 1
+      },
+      {
+        "name": "mv-results-comparison.liquid",
+        "settings": 12,
+        "blocks": 1
+      },
+      {
+        "name": "mv-sales-10.liquid",
+        "settings": 30,
+        "blocks": 1
+      },
+      {
+        "name": "mv-satis-01.liquid",
+        "settings": 56,
+        "blocks": 4
+      },
+      {
+        "name": "mv-satis-02.liquid",
+        "settings": 56,
+        "blocks": 4
+      },
+      {
+        "name": "mv-satis-03.liquid",
+        "settings": 56,
+        "blocks": 4
+      },
+      {
+        "name": "mv-satis-04.liquid",
+        "settings": 56,
+        "blocks": 4
+      },
+      {
+        "name": "mv-satis-05.liquid",
+        "settings": 56,
+        "blocks": 4
+      },
+      {
+        "name": "mv-satis-06.liquid",
+        "settings": 56,
+        "blocks": 4
+      },
+      {
+        "name": "mv-satis-07.liquid",
+        "settings": 56,
+        "blocks": 4
+      },
+      {
+        "name": "mv-satis-08.liquid",
+        "settings": 56,
+        "blocks": 4
+      },
+      {
+        "name": "mv-satis-09.liquid",
+        "settings": 56,
+        "blocks": 4
+      },
+      {
+        "name": "mv-satis-10.liquid",
+        "settings": 140,
+        "blocks": 1
+      },
+      {
+        "name": "mv-satis-11.liquid",
+        "settings": 68,
+        "blocks": 0
+      },
+      {
+        "name": "mv-satis-12.liquid",
+        "settings": 68,
+        "blocks": 0
+      },
+      {
+        "name": "mv-satis-13.liquid",
+        "settings": 68,
+        "blocks": 0
+      },
+      {
+        "name": "mv-satis-14.liquid",
+        "settings": 68,
+        "blocks": 0
+      },
+      {
+        "name": "mv-satis-15.liquid",
+        "settings": 68,
+        "blocks": 0
+      },
+      {
+        "name": "mv-satis-16.liquid",
+        "settings": 68,
+        "blocks": 0
+      },
+      {
+        "name": "mv-satis-17.liquid",
+        "settings": 68,
+        "blocks": 0
+      },
+      {
+        "name": "mv-satis-18.liquid",
+        "settings": 68,
+        "blocks": 0
+      },
+      {
+        "name": "mv-satis-19.liquid",
+        "settings": 68,
+        "blocks": 0
+      },
+      {
+        "name": "mv-stat-proof.liquid",
+        "settings": 44,
+        "blocks": 1
+      },
+      {
+        "name": "mv-sticky-cart.liquid",
+        "settings": 6,
+        "blocks": 0
+      },
+      {
+        "name": "mv-store-contact.liquid",
+        "settings": 5,
+        "blocks": 0
+      },
+      {
+        "name": "mv-store-faq.liquid",
+        "settings": 5,
+        "blocks": 1
+      },
+      {
+        "name": "mv-store-guide.liquid",
+        "settings": 7,
+        "blocks": 1
+      },
+      {
+        "name": "mv-store-journal.liquid",
+        "settings": 4,
+        "blocks": 0
+      },
+      {
+        "name": "mv-technology-showcase-pro.liquid",
+        "settings": 21,
+        "blocks": 1
+      },
+      {
+        "name": "mv-testimonials-cards.liquid",
+        "settings": 5,
+        "blocks": 1
+      },
+      {
+        "name": "mv-three-steps-pro.liquid",
+        "settings": 5,
+        "blocks": 1
+      },
+      {
+        "name": "mv-trust-bar.liquid",
+        "settings": 28,
+        "blocks": 1
+      },
+      {
+        "name": "mv-use-case-cards.liquid",
+        "settings": 30,
+        "blocks": 1
+      },
+      {
+        "name": "mv-use-cases.liquid",
+        "settings": 12,
+        "blocks": 1
+      },
+      {
+        "name": "mv-veloura-hero.liquid",
+        "settings": 44,
+        "blocks": 3
+      },
+      {
+        "name": "mv-why-six.liquid",
+        "settings": 5,
+        "blocks": 1
+      },
+      {
+        "name": "password-footer.liquid",
+        "settings": 1,
+        "blocks": 0
+      },
+      {
+        "name": "password.liquid",
+        "settings": 21,
+        "blocks": 3
+      },
+      {
+        "name": "predictive-search-empty.liquid",
+        "settings": 0,
+        "blocks": 0
+      },
+      {
+        "name": "predictive-search.liquid",
+        "settings": 0,
+        "blocks": 1
+      },
+      {
+        "name": "product-hotspots.liquid",
+        "settings": 19,
+        "blocks": 1
+      },
+      {
+        "name": "product-information.liquid",
+        "settings": 250,
+        "blocks": 6
+      },
+      {
+        "name": "product-list.liquid",
+        "settings": 20,
+        "blocks": 3
+      },
+      {
+        "name": "product-recommendations.liquid",
+        "settings": 21,
+        "blocks": 10
+      },
+      {
+        "name": "quick-order-list.liquid",
+        "settings": 7,
+        "blocks": 0
+      },
+      {
+        "name": "search-header.liquid",
+        "settings": 5,
+        "blocks": 0
+      },
+      {
+        "name": "search-results.liquid",
+        "settings": 17,
+        "blocks": 0
+      },
+      {
+        "name": "section-rendering-product-card.liquid",
+        "settings": 1,
+        "blocks": 0
+      },
+      {
+        "name": "section.liquid",
+        "settings": 33,
+        "blocks": 3
+      },
+      {
+        "name": "slideshow.liquid",
+        "settings": 17,
+        "blocks": 1
+      }
+    ],
+    "templates": [
+      {
+        "name": "404.json",
+        "sections": 3
+      },
+      {
+        "name": "article.json",
+        "sections": 3
+      },
+      {
+        "name": "blog.json",
+        "sections": 2
+      },
+      {
+        "name": "cart.json",
+        "sections": 2
+      },
+      {
+        "name": "collection.json",
+        "sections": 3
+      },
+      {
+        "name": "index.json",
+        "sections": 21
+      },
+      {
+        "name": "list-collections.json",
+        "sections": 2
+      },
+      {
+        "name": "page.about.json",
+        "sections": 2
+      },
+      {
+        "name": "page.contact.json",
+        "sections": 2
+      },
+      {
+        "name": "page.faq.json",
+        "sections": 2
+      },
+      {
+        "name": "page.json",
+        "sections": 5
+      },
+      {
+        "name": "page.returns.json",
+        "sections": 2
+      },
+      {
+        "name": "page.shipping.json",
+        "sections": 2
+      },
+      {
+        "name": "page.tracking.json",
+        "sections": 2
+      },
+      {
+        "name": "password.json",
+        "sections": 1
+      },
+      {
+        "name": "product.json",
+        "sections": 20
+      },
+      {
+        "name": "search.json",
+        "sections": 3
+      }
+    ],
+    "issues": []
+  },
+  "errors": [],
+  "warnings": [
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 130 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/footer.liquid",
+      "severity": 1,
+      "start": {
+        "index": 66063,
+        "line": 2547,
+        "character": 0
+      },
+      "end": {
+        "index": 66075,
+        "line": 2547,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 75 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/header.liquid",
+      "severity": 1,
+      "start": {
+        "index": 43661,
+        "line": 2490,
+        "character": 0
+      },
+      "end": {
+        "index": 43673,
+        "line": 2490,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 68 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-before-after.liquid",
+      "severity": 1,
+      "start": {
+        "index": 25496,
+        "line": 1743,
+        "character": 0
+      },
+      "end": {
+        "index": 25508,
+        "line": 1743,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 49 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-bundle.liquid",
+      "severity": 1,
+      "start": {
+        "index": 32819,
+        "line": 1973,
+        "character": 0
+      },
+      "end": {
+        "index": 32831,
+        "line": 1973,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 88 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-final-cta.liquid",
+      "severity": 1,
+      "start": {
+        "index": 22778,
+        "line": 1401,
+        "character": 0
+      },
+      "end": {
+        "index": 22790,
+        "line": 1401,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 64 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-lifestyle-cta-banner.liquid",
+      "severity": 1,
+      "start": {
+        "index": 16528,
+        "line": 501,
+        "character": 0
+      },
+      "end": {
+        "index": 16540,
+        "line": 501,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 44 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-media-icons.liquid",
+      "severity": 1,
+      "start": {
+        "index": 22588,
+        "line": 952,
+        "character": 0
+      },
+      "end": {
+        "index": 22600,
+        "line": 952,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 48 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-offer-banner.liquid",
+      "severity": 1,
+      "start": {
+        "index": 17800,
+        "line": 947,
+        "character": 0
+      },
+      "end": {
+        "index": 17812,
+        "line": 947,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 56 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-premium-product-cta.liquid",
+      "severity": 1,
+      "start": {
+        "index": 10103,
+        "line": 23,
+        "character": 0
+      },
+      "end": {
+        "index": 10115,
+        "line": 23,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 52 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-satis-01.liquid",
+      "severity": 1,
+      "start": {
+        "index": 17466,
+        "line": 88,
+        "character": 0
+      },
+      "end": {
+        "index": 17478,
+        "line": 88,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 52 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-satis-02.liquid",
+      "severity": 1,
+      "start": {
+        "index": 17467,
+        "line": 88,
+        "character": 0
+      },
+      "end": {
+        "index": 17479,
+        "line": 88,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 52 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-satis-03.liquid",
+      "severity": 1,
+      "start": {
+        "index": 17465,
+        "line": 88,
+        "character": 0
+      },
+      "end": {
+        "index": 17477,
+        "line": 88,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 52 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-satis-04.liquid",
+      "severity": 1,
+      "start": {
+        "index": 17471,
+        "line": 88,
+        "character": 0
+      },
+      "end": {
+        "index": 17483,
+        "line": 88,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 52 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-satis-05.liquid",
+      "severity": 1,
+      "start": {
+        "index": 17467,
+        "line": 88,
+        "character": 0
+      },
+      "end": {
+        "index": 17479,
+        "line": 88,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 52 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-satis-06.liquid",
+      "severity": 1,
+      "start": {
+        "index": 17471,
+        "line": 88,
+        "character": 0
+      },
+      "end": {
+        "index": 17483,
+        "line": 88,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 52 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-satis-07.liquid",
+      "severity": 1,
+      "start": {
+        "index": 17466,
+        "line": 88,
+        "character": 0
+      },
+      "end": {
+        "index": 17478,
+        "line": 88,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 52 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-satis-08.liquid",
+      "severity": 1,
+      "start": {
+        "index": 17469,
+        "line": 88,
+        "character": 0
+      },
+      "end": {
+        "index": 17481,
+        "line": 88,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 52 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-satis-09.liquid",
+      "severity": 1,
+      "start": {
+        "index": 17467,
+        "line": 88,
+        "character": 0
+      },
+      "end": {
+        "index": 17479,
+        "line": 88,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 115 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-satis-10.liquid",
+      "severity": 1,
+      "start": {
+        "index": 57650,
+        "line": 3011,
+        "character": 0
+      },
+      "end": {
+        "index": 57662,
+        "line": 3011,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 63 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-satis-11.liquid",
+      "severity": 1,
+      "start": {
+        "index": 17219,
+        "line": 122,
+        "character": 0
+      },
+      "end": {
+        "index": 17231,
+        "line": 122,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 63 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-satis-12.liquid",
+      "severity": 1,
+      "start": {
+        "index": 17409,
+        "line": 122,
+        "character": 0
+      },
+      "end": {
+        "index": 17421,
+        "line": 122,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 63 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-satis-13.liquid",
+      "severity": 1,
+      "start": {
+        "index": 17141,
+        "line": 122,
+        "character": 0
+      },
+      "end": {
+        "index": 17153,
+        "line": 122,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 63 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-satis-14.liquid",
+      "severity": 1,
+      "start": {
+        "index": 17237,
+        "line": 122,
+        "character": 0
+      },
+      "end": {
+        "index": 17249,
+        "line": 122,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 63 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-satis-15.liquid",
+      "severity": 1,
+      "start": {
+        "index": 17555,
+        "line": 122,
+        "character": 0
+      },
+      "end": {
+        "index": 17567,
+        "line": 122,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 63 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-satis-16.liquid",
+      "severity": 1,
+      "start": {
+        "index": 17240,
+        "line": 122,
+        "character": 0
+      },
+      "end": {
+        "index": 17252,
+        "line": 122,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 63 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-satis-17.liquid",
+      "severity": 1,
+      "start": {
+        "index": 17770,
+        "line": 122,
+        "character": 0
+      },
+      "end": {
+        "index": 17782,
+        "line": 122,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 63 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-satis-18.liquid",
+      "severity": 1,
+      "start": {
+        "index": 17253,
+        "line": 122,
+        "character": 0
+      },
+      "end": {
+        "index": 17265,
+        "line": 122,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 63 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-satis-19.liquid",
+      "severity": 1,
+      "start": {
+        "index": 17309,
+        "line": 122,
+        "character": 0
+      },
+      "end": {
+        "index": 17321,
+        "line": 122,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "ExcessiveSettingsCount",
+      "message": "This schema declares 249 settings, which exceeds the maximum of 40. Consider splitting this section or block into smaller pieces, or grouping related options with a header.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/product-information.liquid",
+      "severity": 1,
+      "start": {
+        "index": 261176,
+        "line": 2886,
+        "character": 0
+      },
+      "end": {
+        "index": 261188,
+        "line": 2886,
+        "character": 12
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "UnusedDocParam",
+      "message": "The parameter 'settings.alignment_horizontal' is defined but not used in this file.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/snippets/divider.liquid",
+      "severity": 1,
+      "start": {
+        "index": 245,
+        "line": 6,
+        "character": 2
+      },
+      "end": {
+        "index": 390,
+        "line": 7,
+        "character": 33
+      },
+      "suggest": [
+        {
+          "message": "Remove unused parameter 'settings.alignment_horizontal'"
+        }
+      ]
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "UnusedDocParam",
+      "message": "The parameter 'settings.thickness' is defined but not used in this file.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/snippets/divider.liquid",
+      "severity": 1,
+      "start": {
+        "index": 393,
+        "line": 8,
+        "character": 2
+      },
+      "end": {
+        "index": 476,
+        "line": 8,
+        "character": 85
+      },
+      "suggest": [
+        {
+          "message": "Remove unused parameter 'settings.thickness'"
+        }
+      ]
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "UnusedDocParam",
+      "message": "The parameter 'settings.corner_radius' is defined but not used in this file.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/snippets/divider.liquid",
+      "severity": 1,
+      "start": {
+        "index": 479,
+        "line": 9,
+        "character": 2
+      },
+      "end": {
+        "index": 572,
+        "line": 9,
+        "character": 95
+      },
+      "suggest": [
+        {
+          "message": "Remove unused parameter 'settings.corner_radius'"
+        }
+      ]
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "UnusedDocParam",
+      "message": "The parameter 'settings.width_percent' is defined but not used in this file.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/snippets/divider.liquid",
+      "severity": 1,
+      "start": {
+        "index": 575,
+        "line": 10,
+        "character": 2
+      },
+      "end": {
+        "index": 676,
+        "line": 10,
+        "character": 103
+      },
+      "suggest": [
+        {
+          "message": "Remove unused parameter 'settings.width_percent'"
+        }
+      ]
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "UnusedDocParam",
+      "message": "The parameter 'settings.divider_color' is defined but not used in this file.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/snippets/divider.liquid",
+      "severity": 1,
+      "start": {
+        "index": 679,
+        "line": 11,
+        "character": 2
+      },
+      "end": {
+        "index": 795,
+        "line": 11,
+        "character": 118
+      },
+      "suggest": [
+        {
+          "message": "Remove unused parameter 'settings.divider_color'"
+        }
+      ]
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "BlockIdUsage",
+      "message": "The ID is dynamically generated by Shopify and is subject to change. You should avoid relying on a literal value of this ID.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/mv-bundle.liquid",
+      "severity": 1,
+      "start": {
+        "index": 2454,
+        "line": 119,
+        "character": 19
+      },
+      "end": {
+        "index": 2477,
+        "line": 119,
+        "character": 42
+      }
+    },
+    {
+      "type": "LiquidHtml",
+      "check": "LiquidComplexity",
+      "message": "Liquid complexity is 202, which exceeds the maximum of 120. The decision at line 328 pushed it over the limit. Consider simplifying conditional logic, or moving self-contained decision logic into snippets with the render tag.",
+      "uri": "file:///workspace/theme-adaptations/marketvitrini-complete/sections/product-information.liquid",
+      "severity": 1,
+      "start": {
+        "index": 27064,
+        "line": 327,
+        "character": 12
+      },
+      "end": {
+        "index": 27087,
+        "line": 327,
+        "character": 35
+      }
+    }
+  ]
+}

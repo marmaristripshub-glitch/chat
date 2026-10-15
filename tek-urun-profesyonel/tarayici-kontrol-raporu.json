@@ -1,0 +1,269 @@
+{
+  "checks": 43,
+  "results": [
+    {
+      "view": "index",
+      "width": 320,
+      "scroll": 320,
+      "screen": 320,
+      "wide": [
+        "mvh7",
+        "mvh7__frame",
+        "mvh7__bg",
+        "mvh7__bg-img",
+        "mvh7__overlay",
+        "mvh7__inner"
+      ]
+    },
+    {
+      "view": "index",
+      "width": 375,
+      "scroll": 375,
+      "screen": 375,
+      "wide": [
+        "mvh7",
+        "mvh7__frame",
+        "mvh7__bg",
+        "mvh7__bg-img",
+        "mvh7__overlay",
+        "mvh7__inner"
+      ]
+    },
+    {
+      "view": "index",
+      "width": 390,
+      "scroll": 390,
+      "screen": 390,
+      "wide": [
+        "mvh7",
+        "mvh7__frame",
+        "mvh7__bg",
+        "mvh7__bg-img",
+        "mvh7__overlay",
+        "mvh7__inner"
+      ]
+    },
+    {
+      "view": "index",
+      "width": 768,
+      "scroll": 768,
+      "screen": 768,
+      "wide": [
+        "mvh7",
+        "mvh7__frame",
+        "mvh7__bg",
+        "mvh7__bg-img",
+        "mvh7__overlay",
+        "mvh7__inner"
+      ]
+    },
+    {
+      "view": "index",
+      "width": 1024,
+      "scroll": 1024,
+      "screen": 1024,
+      "wide": [
+        "mvh7",
+        "mvh7__frame",
+        "mvh7__bg",
+        "mvh7__bg-img",
+        "mvh7__overlay",
+        "mvh7__inner"
+      ]
+    },
+    {
+      "view": "index",
+      "width": 1440,
+      "scroll": 1440,
+      "screen": 1440,
+      "wide": [
+        "mvh7",
+        "mvh7__frame",
+        "mvh7__bg",
+        "mvh7__bg-img",
+        "mvh7__overlay",
+        "mvh7__inner"
+      ]
+    },
+    {
+      "view": "product",
+      "width": 320,
+      "scroll": 320,
+      "screen": 320,
+      "wide": [
+        "mv-benefits-pro__decoration",
+        "mv-benefits-pro__decoration",
+        "mv-final-v8__ring"
+      ]
+    },
+    {
+      "view": "product",
+      "width": 375,
+      "scroll": 375,
+      "screen": 375,
+      "wide": [
+        "mv-benefits-pro__decoration",
+        "mv-benefits-pro__decoration",
+        "mv-final-v8__ring"
+      ]
+    },
+    {
+      "view": "product",
+      "width": 390,
+      "scroll": 390,
+      "screen": 390,
+      "wide": [
+        "mv-benefits-pro__decoration",
+        "mv-benefits-pro__decoration",
+        "mv-final-v8__ring"
+      ]
+    },
+    {
+      "view": "product",
+      "width": 768,
+      "scroll": 768,
+      "screen": 768,
+      "wide": [
+        "mv-benefits-pro__decoration",
+        "mv-benefits-pro__decoration",
+        "mvs-v14__form",
+        "mvs-v14__submit"
+      ]
+    },
+    {
+      "view": "product",
+      "width": 1024,
+      "scroll": 1024,
+      "screen": 1024,
+      "wide": [
+        "mv-benefits-pro__decoration",
+        "mvs-v14__form",
+        "mvs-v14__submit"
+      ]
+    },
+    {
+      "view": "product",
+      "width": 1440,
+      "scroll": 1440,
+      "screen": 1440,
+      "wide": []
+    },
+    {
+      "view": "page.contact",
+      "width": 390,
+      "scroll": 390,
+      "screen": 390,
+      "wide": []
+    },
+    {
+      "view": "page.contact",
+      "width": 1280,
+      "scroll": 1280,
+      "screen": 1280,
+      "wide": []
+    },
+    {
+      "view": "page.about",
+      "width": 390,
+      "scroll": 390,
+      "screen": 390,
+      "wide": []
+    },
+    {
+      "view": "page.about",
+      "width": 1280,
+      "scroll": 1280,
+      "screen": 1280,
+      "wide": []
+    },
+    {
+      "view": "page.faq",
+      "width": 390,
+      "scroll": 390,
+      "screen": 390,
+      "wide": []
+    },
+    {
+      "view": "page.faq",
+      "width": 1280,
+      "scroll": 1280,
+      "screen": 1280,
+      "wide": []
+    },
+    {
+      "view": "page.shipping",
+      "width": 390,
+      "scroll": 390,
+      "screen": 390,
+      "wide": []
+    },
+    {
+      "view": "page.shipping",
+      "width": 1280,
+      "scroll": 1280,
+      "screen": 1280,
+      "wide": []
+    },
+    {
+      "view": "page.returns",
+      "width": 390,
+      "scroll": 390,
+      "screen": 390,
+      "wide": []
+    },
+    {
+      "view": "page.returns",
+      "width": 1280,
+      "scroll": 1280,
+      "screen": 1280,
+      "wide": []
+    },
+    {
+      "view": "page.tracking",
+      "width": 390,
+      "scroll": 390,
+      "screen": 390,
+      "wide": []
+    },
+    {
+      "view": "page.tracking",
+      "width": 1280,
+      "scroll": 1280,
+      "screen": 1280,
+      "wide": []
+    },
+    {
+      "view": "article",
+      "width": 390,
+      "scroll": 390,
+      "screen": 390,
+      "wide": []
+    },
+    {
+      "view": "article",
+      "width": 1280,
+      "scroll": 1280,
+      "screen": 1280,
+      "wide": []
+    }
+  ],
+  "accessibility": [
+    {
+      "view": "product",
+      "violations": []
+    },
+    {
+      "view": "index",
+      "violations": []
+    },
+    {
+      "view": "page.contact",
+      "violations": []
+    },
+    {
+      "view": "page.faq",
+      "violations": []
+    }
+  ],
+  "errors": []
+}
